@@ -2,7 +2,7 @@
 
 ## TASKO
 
-#### [Antônio Augusto Tavares Ribeiro André](https://www.linkedin.com/in/antonio-augusto-tavares-ribeiro-andr%C3%A9-613937345?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app)
+#### [Henrique rodrigues diniz](https://www.linkedin.com/in/henrique-rodrigues-diniz-b7b011319/)
 
 ## Sumário
 
@@ -16,9 +16,14 @@
 
 ## <a name="c1"></a>1. Introdução (Semana 01)
 
-&emsp;TASKO é um gerenciador de tarefas projetado para proporcionar uma maneira eficiente e ágil de controlar atividades, ajudando os usuários a aumentar sua produtividade. A plataforma foi desenvolvida para otimizar a organização e execução de tarefas, permitindo que os usuários se concentrem no essencial, sem sobrecargas ou atrasos.
+## 1. Introdução
 
-&emsp;Sua principal funcionalidade é a organização e detalhamento intuitivo das tarefas. Com o TASKO, o usuário pode criar listas de tarefas e destrinchá-las em subtarefas, facilitando o acompanhamento de atividades mais complexas. Além disso, a plataforma conta com uma ferramenta de priorização inteligente que organiza as tarefas de acordo com sua urgência, garantindo que o usuário sempre saiba o que deve ser feito primeiro.
+O **Sistema de Reserva de Salas do Inteli** é uma aplicação web desenvolvida para facilitar o processo de agendamento de salas de estudo, salas de reunião e espaços multiuso dentro da instituição. Seu objetivo principal é **otimizar a gestão dos espaços físicos**, evitando conflitos de horários e garantindo que os usuários tenham acesso rápido e confiável às informações de disponibilidade.
+
+Por meio da plataforma, os usuários podem **visualizar as salas disponíveis**, **realizar reservas**, **cancelar agendamentos** e acompanhar suas reservas anteriores. O sistema foi projetado para atender tanto **estudantes**, que precisam reservar salas para trabalhos em grupo, quanto **professores e colaboradores**, que utilizam os espaços para reuniões, aulas e atividades acadêmicas. A aplicação busca oferecer uma **experiência intuitiva e eficiente**, com funcionalidades que simplificam o agendamento, reduzem o risco de conflitos e promovem uma melhor utilização dos recursos físicos da instituição.
+
+
+
 
 ---
 
@@ -36,83 +41,53 @@
 
 ## <a name="c3"></a>3. Projeto da Aplicação Web
 
-### 3.1. Modelagem do banco de dados  (Semana 3)
 
-&emsp;A modelagem de banco de dados é uma etapa essencial para organização e eficiência de um sistema de armazenamento. <br>
-&emsp;Apenas com uma boa prática na criação do banco de dados é que se pode ter um bom uso e execução de um sistema.
+### 3.1. Modelagem do Banco de Dados
 
-<div style ="text-align: center">
+A modelagem do banco de dados foi estruturada para representar de forma clara as entidades e relacionamentos essenciais do **Sistema de Reserva de Salas do Inteli**. As principais tabelas do sistema são **users** (usuários), **rooms** (salas) e **bookings** (reservas). A tabela de **bookings** conecta usuários e salas, registrando quem fez a reserva, para qual sala e em qual período.
 
-Figura 1: MER Banco de Dados
-![alt text](assets/ModeloDB.png)
+<p align="center">
+  <b>Figura 1: Modelo Relacional do Banco de Dados</b><br>
+  <img src="assets/Screenshot%202025-05-09%20211036.png" alt="Modelo Banco de Dados">
+</p>
 
-</div>
+No diagrama apresentado, observa-se que a tabela **bookings** possui chaves estrangeiras apontando para **users** e **rooms**, garantindo que apenas salas e usuários válidos sejam registrados em uma reserva. Essa estrutura facilita o controle de agendamentos, evitando sobreposições e garantindo integridade referencial.
 
-&emsp;No modelo relacional acima, é possível observar que a tabela tasks está associada a um usuário, que pode escolher uma categoria para criar sua atividade. Cada atividade possui informações sobre quem a criou, assim como o ID da tarefa associada, sendo esta uma sub-seção das atividades. Dentro das tarefas, há a opção de adicionar tags, bem como de definir um nível de prioridade, utilizando características previamente definidas.
+O código SQL para criação das tabelas está descrito a seguir:
 
-&emsp;A partir do modelo relacional é traduzí-lo para código SQL, linguagem usada para poder realizar a aplicação.
-
-``` sql
-    CREATE TABLE users (
-    id INT PRIMARY KEY,
-    name TEXT NOT NULL,
-    cpf TEXT NOT NULL,
-    birthdate DATE NOT NULL
-);
-```
-&emsp;No exemplo acima é possível perceber o comando básico para criação de uma tabela no banco de dados com a sua entidade e seus respectivos atributos.
-
-``` sql
-CREATE TABLE categories (
-    id INT PRIMARY KEY,
-    title TEXT NOT NULL
+```sql
+-- Criação da tabela USERS
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    status VARCHAR(20) DEFAULT 'ativo'
 );
 
-CREATE TABLE tasks (
-    id INT PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT,
-    status TEXT,
-    created_at TIMESTAMP
+-- Criação da tabela ROOMS
+CREATE TABLE rooms (
+    room_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    location VARCHAR(100),
+    capacity INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'ativa'
 );
 
-CREATE TABLE activities (
-    id INT PRIMARY KEY,
-    task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id),
-    category_id INT REFERENCES categories(id),
-    duration_hours INT,
-    day_activ DATE,
-    description TEXT
+-- Criação da tabela BOOKINGS
+CREATE TABLE bookings (
+    booking_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    room_id INT NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status VARCHAR(20) DEFAULT 'confirmada',
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
 
-CREATE TABLE comments (
-    id INT PRIMARY KEY,
-    task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id),
-    content TEXT,
-    created_at TIMESTAMP
-);
 
-CREATE TABLE priorities (
-    id INT PRIMARY KEY,
-    label TEXT,
-    color TEXT
-);
-
-CREATE TABLE task_priority (
-    task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
-    priority_id INT REFERENCES priorities(id),
-    PRIMARY KEY (task_id) 
-);
-
-CREATE TABLE reminders (
-    id INT PRIMARY KEY,
-    task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
-    remind_at TIMESTAMP,
-    sent BOOLEAN
-);
 ```
 &emsp;No exemplo acima, é apresentada a forma como é possível estabelecer a relação entre tabelas por meio do comando 'REFERENCES', que usa uma chave estrangeira em uma tabela e apondar para uma chave primária em outra tabela, permitindo a interação entre tabelas e realizando a lógica para as funcionalidades do gerenciador de tarefas.
 
