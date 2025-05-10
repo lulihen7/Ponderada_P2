@@ -1,6 +1,6 @@
 # Web Application Document - Projeto Individual - Módulo 2 - Inteli
 
-## TASKO
+## Sistema de Reserva de Salas do Inteli
 
 #### [Henrique rodrigues diniz](https://www.linkedin.com/in/henrique-rodrigues-diniz-b7b011319/)
 
