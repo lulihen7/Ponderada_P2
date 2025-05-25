@@ -42,90 +42,80 @@ Por meio da plataforma, os usuários podem **visualizar as salas disponíveis**,
 ## <a name="c3"></a>3. Projeto da Aplicação Web
 
 
-### 3.1. Modelagem do Banco de Dados
+## 3. Projeto da Aplicação Web
 
-A modelagem do banco de dados foi estruturada para representar de forma clara as entidades e relacionamentos essenciais do **Sistema de Reserva de Salas do Inteli**. As principais tabelas do sistema são **users** (usuários), **rooms** (salas) e **bookings** (reservas). A tabela de **bookings** conecta usuários e salas, registrando quem fez a reserva, para qual sala e em qual período.
+### 3.1. Modelagem do Banco de Dados (Semana 3)
 
-<p align="center">
-  <b>Figura 1: Modelo Relacional do Banco de Dados</b><br>
-  <img src="assets/Screenshot%202025-05-09%20211036.png" alt="Modelo Banco de Dados">
-</p>
+A modelagem do banco de dados do sistema de Gerenciamento de Tarefas foi projetada com base em um modelo relacional que reflete as necessidades funcionais da aplicação, garantindo organização, consistência e escalabilidade dos dados. O sistema é estruturado em quatro entidades principais: **Usuários (usuarios)**, **Categorias (categorias)**, **Tarefas (tarefas)** e **Comentários (comentarios)**. Cada entidade foi definida para suportar funcionalidades essenciais como cadastro, organização de tarefas e comunicação via comentários.
 
-No diagrama apresentado, observa-se que a tabela **bookings** possui chaves estrangeiras apontando para **users** e **rooms**, garantindo que apenas salas e usuários válidos sejam registrados em uma reserva. Essa estrutura facilita o controle de agendamentos, evitando sobreposições e garantindo integridade referencial.
-
-O código SQL para criação das tabelas está descrito a seguir:
+Abaixo está o script SQL completo para criação das tabelas e relacionamentos:
 
 ```sql
--- Criação da tabela USERS
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    status VARCHAR(20) DEFAULT 'ativo'
+-- Criação da tabela de usuários
+CREATE TABLE usuarios (
+  id SERIAL PRIMARY KEY,                                    -- Identificador único do usuário com auto-incremento
+  nome VARCHAR(100) NOT NULL,                               -- Nome do usuário
+  email VARCHAR(100) UNIQUE NOT NULL,                       -- Email único para cada usuário
+  senha_hash TEXT NOT NULL,                                 -- Hash da senha para segurança
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- Data de criação do registro
 );
 
--- Criação da tabela ROOMS
-CREATE TABLE rooms (
-    room_id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    location VARCHAR(100),
-    capacity INT NOT NULL,
-    status VARCHAR(20) DEFAULT 'ativa'
+-- Criação da tabela de categorias de tarefas (opcional)
+CREATE TABLE categorias (
+  id SERIAL PRIMARY KEY,                                    -- Identificador único da categoria
+  nome VARCHAR(50) NOT NULL                                 -- Nome descritivo da categoria
 );
 
--- Criação da tabela BOOKINGS
-CREATE TABLE bookings (
-    booking_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    room_id INT NOT NULL,
-    start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NOT NULL,
-    status VARCHAR(20) DEFAULT 'confirmada',
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+-- Criação da tabela de tarefas
+CREATE TABLE tarefas (
+  id SERIAL PRIMARY KEY,                                    -- Identificador único da tarefa
+  usuario_id INT NOT NULL,                                  -- Referência obrigatória ao usuário que criou a tarefa
+  titulo VARCHAR(255) NOT NULL,                             -- Título descritivo da tarefa
+  descricao TEXT,                                           -- Descrição opcional da tarefa
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- Data de criação da tarefa
+  data_limite DATE,                                         -- Data limite para conclusão (opcional)
+  status VARCHAR(20) DEFAULT 'pendente' CHECK (status IN ('pendente', 'em progresso', 'concluída')), -- Status com validação
+  categoria_id INT,                                         -- Referência opcional a uma categoria
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id),         -- Chave estrangeira para usuário
+  FOREIGN KEY (categoria_id) REFERENCES categorias(id)      -- Chave estrangeira para categoria
 );
 
-
+-- Criação da tabela de comentários para cada tarefa (opcional)
+CREATE TABLE comentarios (
+  id SERIAL PRIMARY KEY,                                    -- Identificador único do comentário
+  tarefa_id INT NOT NULL,                                   -- Referência à tarefa comentada
+  usuario_id INT NOT NULL,                                  -- Referência ao usuário que comentou
+  texto TEXT NOT NULL,                                      -- Texto do comentário
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- Data de criação do comentário
+  FOREIGN KEY (tarefa_id) REFERENCES tarefas(id),           -- Chave estrangeira para tarefa
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)          -- Chave estrangeira para usuário
 ```
+);
+3.1.1. Explicação do Modelo de Dados
+Tabela usuarios
+Armazena as informações dos usuários do sistema. Inclui nome, email (único), senha (hash para segurança) e data de criação.
+A chave primária id garante a identificação única de cada usuário.
 
-### 3.1.1 BD e Models (Semana 5)
-*Descreva aqui os Models implementados no sistema web*
+Tabela categorias
+Permite organizar tarefas em categorias. Cada categoria tem um identificador e um nome descritivo.
 
-### 3.2. Arquitetura (Semana 5)
+Tabela tarefas
+Núcleo do sistema, armazena as tarefas com título, descrição, data de criação, data limite opcional, status e categoria.
+Cada tarefa pertence a um usuário (via usuario_id) e pode opcionalmente estar vinculada a uma categoria (categoria_id).
+O campo status restringe os valores para garantir a consistência dos dados.
 
-*Posicione aqui o diagrama de arquitetura da sua solução de aplicação web. Atualize sempre que necessário.*
+Tabela comentarios
+Permite comentários em tarefas, vinculando cada comentário ao usuário que o fez e à tarefa correspondente.
+Suporta a comunicação e o acompanhamento das atividades.
 
-**Instruções para criação do diagrama de arquitetura**  
-- **Model**: A camada que lida com a lógica de negócios e interage com o banco de dados.
-- **View**: A camada responsável pela interface de usuário.
-- **Controller**: A camada que recebe as requisições, processa as ações e atualiza o modelo e a visualização.
-  
-*Adicione as setas e explicações sobre como os dados fluem entre o Model, Controller e View.*
+3.1.2. Executando o Script do Banco de Dados
+Certifique-se de que o PostgreSQL está instalado e em execução.
 
-### 3.3. Wireframes (Semana 03 - opcional)
+Abra seu cliente PostgreSQL preferido (psql, DBeaver, TablePlus).
 
-*Posicione aqui as imagens do wireframe construído para sua solução e, opcionalmente, o link para acesso (mantenha o link sempre público para visualização).*
+Execute o script SQL acima para criar as tabelas e relacionamentos.
 
-### 3.4. Guia de estilos (Semana 05 - opcional)
-
-*Descreva aqui orientações gerais para o leitor sobre como utilizar os componentes do guia de estilos de sua solução.*
-
-
-### 3.5. Protótipo de alta fidelidade (Semana 05 - opcional)
-
-*Posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização).*
-
-### 3.6. WebAPI e endpoints (Semana 05)
-
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.*  
-
-### 3.7 Interface e Navegação (Semana 07)
-
-*Descreva e ilustre aqui o desenvolvimento do frontend do sistema web, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
-
----
+```psql -U seu_usuario -d seu_banco -a -f caminho/para/o_script.sql```
 
 ## <a name="c4"></a>4. Desenvolvimento da Aplicação Web (Semana 8)
 
