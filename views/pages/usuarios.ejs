@@ -1,0 +1,240 @@
+<!-- Inclui o header -->
+<%- include('../components/header') %>
+
+<div class="container">
+  <!-- Cabeçalho da página -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1><i class="fas fa-users"></i> Gerenciar Usuários</h1>
+      <p class="text-muted">Cadastre e gerencie usuários do sistema</p>
+    </div>
+    <button class="btn btn-primary" onclick="abrirModalUsuario()">
+      <i class="fas fa-user-plus"></i> Novo Usuário
+    </button>
+  </div>
+
+  <!-- Lista de usuários -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Lista de Usuários</h2>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Data de Cadastro</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-usuarios">
+            <tr>
+              <td colspan="5" class="text-center">
+                <div class="loading"></div> Carregando usuários...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para criar/editar usuário -->
+<div id="modal-usuario" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-title" class="modal-title">Novo Usuário</h3>
+      <button class="modal-close" onclick="fecharModalUsuario()">&times;</button>
+    </div>
+    <form id="form-usuario" onsubmit="salvarUsuario(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nome *</label>
+          <input type="text" id="usuario-nome" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" id="usuario-email" class="form-control" required>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="fecharModalUsuario()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let usuarios = [];
+let usuarioEditando = null;
+
+// Carregar dados iniciais
+document.addEventListener('DOMContentLoaded', function() {
+  carregarUsuarios();
+});
+
+// Carregar usuários da API
+async function carregarUsuarios() {
+  try {
+    const response = await fetch('/api/usuarios');
+    usuarios = await response.json();
+    exibirUsuarios();
+  } catch (error) {
+    console.error('Erro ao carregar usuários:', error);
+    document.getElementById('tabela-usuarios').innerHTML = 
+      '<tr><td colspan="5" class="text-center">Erro ao carregar usuários</td></tr>';
+  }
+}
+
+// Exibir usuários na tabela
+function exibirUsuarios() {
+  const tbody = document.getElementById('tabela-usuarios');
+  
+  if (usuarios.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum usuário encontrado</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = usuarios.map(usuario => `
+    <tr>
+      <td>${usuario.id}</td>
+      <td>${usuario.nome}</td>
+      <td>${usuario.email}</td>
+      <td>${formatarData(usuario.data_criacao)}</td>
+      <td>
+        <button class="btn btn-sm btn-secondary" onclick="editarUsuario(${usuario.id})">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger" onclick="excluirUsuario(${usuario.id})">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Modal functions
+function abrirModalUsuario(usuario = null) {
+  usuarioEditando = usuario;
+  const modal = document.getElementById('modal-usuario');
+  const title = document.getElementById('modal-title');
+  
+  if (usuario) {
+    title.textContent = 'Editar Usuário';
+    preencherFormulario(usuario);
+  } else {
+    title.textContent = 'Novo Usuário';
+    limparFormulario();
+  }
+  
+  modal.classList.add('show');
+}
+
+function fecharModalUsuario() {
+  document.getElementById('modal-usuario').classList.remove('show');
+  usuarioEditando = null;
+}
+
+function preencherFormulario(usuario) {
+  document.getElementById('usuario-nome').value = usuario.nome;
+  document.getElementById('usuario-email').value = usuario.email;
+}
+
+function limparFormulario() {
+  document.getElementById('form-usuario').reset();
+}
+
+// Salvar usuário
+async function salvarUsuario(event) {
+  event.preventDefault();
+  
+  const dados = {
+    nome: document.getElementById('usuario-nome').value,
+    email: document.getElementById('usuario-email').value
+  };
+  
+  try {
+    let response;
+    if (usuarioEditando) {
+      response = await fetch(`/api/usuarios/${usuarioEditando.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+    } else {
+      response = await fetch('/api/usuarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+    }
+    
+    if (response.ok) {
+      fecharModalUsuario();
+      carregarUsuarios();
+      alert('Usuário salvo com sucesso!');
+    } else {
+      const error = await response.json();
+      throw new Error(error.error || 'Erro ao salvar usuário');
+    }
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao salvar usuário: ' + error.message);
+  }
+}
+
+// Editar usuário
+function editarUsuario(id) {
+  const usuario = usuarios.find(u => u.id === id);
+  if (usuario) {
+    abrirModalUsuario(usuario);
+  }
+}
+
+// Excluir usuário
+async function excluirUsuario(id) {
+  if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+  
+  try {
+    const response = await fetch(`/api/usuarios/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      carregarUsuarios();
+      alert('Usuário excluído com sucesso!');
+    } else {
+      const error = await response.json();
+      throw new Error(error.error || 'Erro ao excluir usuário');
+    }
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao excluir usuário: ' + error.message);
+  }
+}
+
+// Função auxiliar para formatar data
+function formatarData(data) {
+  if (!data) return 'N/A';
+  return new Date(data).toLocaleDateString('pt-BR');
+}
+
+// Fechar modal clicando fora
+window.onclick = function(event) {
+  const modal = document.getElementById('modal-usuario');
+  if (event.target === modal) {
+    fecharModalUsuario();
+  }
+}
+</script>

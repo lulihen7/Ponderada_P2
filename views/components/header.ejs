@@ -1,9 +1,31 @@
 <header>
-  <nav>
-    <ul>
-      <li><a href="/">Página Inicial</a></li>
-      <li><a href="/about">Sobre Nós</a></li>
-      <!-- Adicione outras opções de navegação conforme necessário -->
+  <nav class="navbar">
+    <a href="/" class="logo">Tarefas+</a>
+    <ul class="nav-links">
+      <li><a href="/" id="nav-dashboard">Dashboard</a></li>
+      <li><a href="/tarefas-page" id="nav-tarefas">Tarefas</a></li>
+      <li><a href="/usuarios-page" id="nav-usuarios">Usuários</a></li>
+      <li><a href="/categorias-page" id="nav-categorias">Categorias</a></li>
     </ul>
   </nav>
 </header>
+
+<script>
+  // Marcar link ativo baseado na URL atual
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      }
+    });
+    
+    // Se estivermos na raiz, marcar dashboard como ativo
+    if (currentPath === '/') {
+      document.getElementById('nav-dashboard').classList.add('active');
+    }
+  });
+</script>

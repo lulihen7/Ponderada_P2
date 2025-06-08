@@ -1,0 +1,170 @@
+<!-- Inclui o header -->
+<%- include('../components/header') %>
+
+<div class="container">
+  <div class="card-header">
+    <h1 class="card-title">
+      <i class="fas fa-tachometer-alt"></i> Dashboard - Tarefas+
+    </h1>
+    <p class="text-muted">Bem-vindo ao sistema de gerenciamento de tarefas</p>
+  </div>
+
+  <!-- Cards de estatísticas -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-tasks" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+        <h3 id="total-tarefas" class="mb-1">0</h3>
+        <p class="text-muted mb-0">Total de Tarefas</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-users" style="font-size: 2rem; color: var(--success-color); margin-bottom: 1rem;"></i>
+        <h3 id="total-usuarios" class="mb-1">0</h3>
+        <p class="text-muted mb-0">Usuários Cadastrados</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-tags" style="font-size: 2rem; color: var(--warning-color); margin-bottom: 1rem;"></i>
+        <h3 id="total-categorias" class="mb-1">0</h3>
+        <p class="text-muted mb-0">Categorias</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--success-color); margin-bottom: 1rem;"></i>
+        <h3 id="tarefas-concluidas" class="mb-1">0</h3>
+        <p class="text-muted mb-0">Tarefas Concluídas</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarefas recentes -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">
+        <i class="fas fa-clock"></i> Tarefas Recentes
+      </h2>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Usuário</th>
+              <th>Status</th>
+              <th>Data Limite</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tarefas-recentes">
+            <tr>
+              <td colspan="5" class="text-center">
+                <div class="loading"></div> Carregando tarefas...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botões de ação rápida -->
+  <div class="text-center mt-3">
+    <a href="/tarefas-page" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Nova Tarefa
+    </a>
+    <a href="/usuarios-page" class="btn btn-secondary">
+      <i class="fas fa-user-plus"></i> Gerenciar Usuários
+    </a>
+    <a href="/categorias-page" class="btn btn-secondary">
+      <i class="fas fa-tags"></i> Gerenciar Categorias
+    </a>
+  </div>
+</div>
+
+<script>
+// Função para carregar estatísticas do dashboard
+async function carregarEstatisticas() {
+  try {
+    // Carregar dados das APIs
+    const [tarefasRes, usuariosRes, categoriasRes] = await Promise.all([
+      fetch('/api/tarefas'),
+      fetch('/api/usuarios'),
+      fetch('/api/categorias')
+    ]);
+
+    const tarefas = await tarefasRes.json();
+    const usuarios = await usuariosRes.json();
+    const categorias = await categoriasRes.json();
+
+    // Atualizar contadores
+    document.getElementById('total-tarefas').textContent = tarefas.length;
+    document.getElementById('total-usuarios').textContent = usuarios.length;
+    document.getElementById('total-categorias').textContent = categorias.length;
+    
+    // Contar tarefas concluídas
+    const tarefasConcluidas = tarefas.filter(t => t.status === 'concluída').length;
+    document.getElementById('tarefas-concluidas').textContent = tarefasConcluidas;
+
+    // Carregar tarefas recentes (últimas 5)
+    carregarTarefasRecentes(tarefas.slice(0, 5));
+
+  } catch (error) {
+    console.error('Erro ao carregar estatísticas:', error);
+  }
+}
+
+// Função para carregar tarefas recentes
+function carregarTarefasRecentes(tarefas) {
+  const tbody = document.getElementById('tarefas-recentes');
+  
+  if (tarefas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhuma tarefa encontrada</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = tarefas.map(tarefa => `
+    <tr>
+      <td>${tarefa.titulo}</td>
+      <td>${tarefa.usuario_nome || 'N/A'}</td>
+      <td>
+        <span class="badge ${getStatusBadgeClass(tarefa.status)}">
+          ${tarefa.status}
+        </span>
+      </td>
+      <td>${formatarData(tarefa.data_limite)}</td>
+      <td>
+        <a href="/tarefas-page" class="btn btn-sm btn-secondary">
+          <i class="fas fa-eye"></i>
+        </a>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Função auxiliar para classe do badge de status
+function getStatusBadgeClass(status) {
+  switch(status) {
+    case 'concluída': return 'badge-success';
+    case 'em progresso': return 'badge-warning';
+    case 'pendente': return 'badge-info';
+    default: return 'badge-info';
+  }
+}
+
+// Função auxiliar para formatar data
+function formatarData(data) {
+  if (!data) return 'N/A';
+  return new Date(data).toLocaleDateString('pt-BR');
+}
+
+// Carregar dados quando a página carrega
+document.addEventListener('DOMContentLoaded', carregarEstatisticas);
+</script>

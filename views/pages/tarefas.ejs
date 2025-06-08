@@ -1,0 +1,383 @@
+<!-- Inclui o header -->
+<%- include('../components/header') %>
+
+<div class="container">
+  <!-- Cabeçalho da página -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1><i class="fas fa-tasks"></i> Gerenciar Tarefas</h1>
+      <p class="text-muted">Crie, edite e organize suas tarefas</p>
+    </div>
+    <button class="btn btn-primary" onclick="abrirModalTarefa()">
+      <i class="fas fa-plus"></i> Nova Tarefa
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Filtrar por Status</label>
+          <select id="filtro-status" class="form-control" onchange="filtrarTarefas()">
+            <option value="">Todos os status</option>
+            <option value="pendente">Pendente</option>
+            <option value="em progresso">Em Progresso</option>
+            <option value="concluída">Concluída</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Filtrar por Categoria</label>
+          <select id="filtro-categoria" class="form-control" onchange="filtrarTarefas()">
+            <option value="">Todas as categorias</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de tarefas -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Lista de Tarefas</h2>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Usuário</th>
+              <th>Categoria</th>
+              <th>Status</th>
+              <th>Data Limite</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-tarefas">
+            <tr>
+              <td colspan="7" class="text-center">
+                <div class="loading"></div> Carregando tarefas...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para criar/editar tarefa -->
+<div id="modal-tarefa" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-title" class="modal-title">Nova Tarefa</h3>
+      <button class="modal-close" onclick="fecharModalTarefa()">&times;</button>
+    </div>
+    <form id="form-tarefa" onsubmit="salvarTarefa(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Título *</label>
+          <input type="text" id="tarefa-titulo" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Descrição</label>
+          <textarea id="tarefa-descricao" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Usuário *</label>
+            <select id="tarefa-usuario" class="form-control" required>
+              <option value="">Selecione um usuário</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <select id="tarefa-categoria" class="form-control">
+              <option value="">Sem categoria</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select id="tarefa-status" class="form-control">
+              <option value="pendente">Pendente</option>
+              <option value="em progresso">Em Progresso</option>
+              <option value="concluída">Concluída</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Data Limite</label>
+            <input type="date" id="tarefa-data-limite" class="form-control">
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="fecharModalTarefa()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let tarefas = [];
+let usuarios = [];
+let categorias = [];
+let tarefaEditando = null;
+
+// Carregar dados iniciais
+document.addEventListener('DOMContentLoaded', async function() {
+  await carregarDados();
+  carregarTarefas();
+});
+
+// Carregar dados das APIs
+async function carregarDados() {
+  try {
+    const [tarefasRes, usuariosRes, categoriasRes] = await Promise.all([
+      fetch('/api/tarefas'),
+      fetch('/api/usuarios'),
+      fetch('/api/categorias')
+    ]);
+
+    tarefas = await tarefasRes.json();
+    usuarios = await usuariosRes.json();
+    categorias = await categoriasRes.json();
+
+    // Preencher selects
+    preencherSelectUsuarios();
+    preencherSelectCategorias();
+    
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+    alert('Erro ao carregar dados. Tente novamente.');
+  }
+}
+
+// Preencher select de usuários
+function preencherSelectUsuarios() {
+  const selectUsuario = document.getElementById('tarefa-usuario');
+  selectUsuario.innerHTML = '<option value="">Selecione um usuário</option>';
+  
+  usuarios.forEach(usuario => {
+    selectUsuario.innerHTML += `<option value="${usuario.id}">${usuario.nome}</option>`;
+  });
+}
+
+// Preencher selects de categorias
+function preencherSelectCategorias() {
+  const selectCategoria = document.getElementById('tarefa-categoria');
+  const filtroCategoria = document.getElementById('filtro-categoria');
+  
+  selectCategoria.innerHTML = '<option value="">Sem categoria</option>';
+  filtroCategoria.innerHTML = '<option value="">Todas as categorias</option>';
+  
+  categorias.forEach(categoria => {
+    const option = `<option value="${categoria.id}">${categoria.nome}</option>`;
+    selectCategoria.innerHTML += option;
+    filtroCategoria.innerHTML += option;
+  });
+}
+
+// Carregar e exibir tarefas
+function carregarTarefas() {
+  const tbody = document.getElementById('tabela-tarefas');
+  
+  if (tarefas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhuma tarefa encontrada</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = tarefas.map(tarefa => `
+    <tr>
+      <td>${tarefa.titulo}</td>
+      <td>${tarefa.descricao || 'N/A'}</td>
+      <td>${tarefa.usuario_nome || 'N/A'}</td>
+      <td>${tarefa.categoria_nome || 'Sem categoria'}</td>
+      <td>
+        <span class="badge ${getStatusBadgeClass(tarefa.status)}">
+          ${tarefa.status}
+        </span>
+      </td>
+      <td>${formatarData(tarefa.data_limite)}</td>
+      <td>
+        <button class="btn btn-sm btn-secondary" onclick="editarTarefa(${tarefa.id})">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger" onclick="excluirTarefa(${tarefa.id})">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Filtrar tarefas
+function filtrarTarefas() {
+  const filtroStatus = document.getElementById('filtro-status').value;
+  const filtroCategoria = document.getElementById('filtro-categoria').value;
+  
+  let tarefasFiltradas = [...tarefas];
+  
+  if (filtroStatus) {
+    tarefasFiltradas = tarefasFiltradas.filter(t => t.status === filtroStatus);
+  }
+  
+  if (filtroCategoria) {
+    tarefasFiltradas = tarefasFiltradas.filter(t => t.categoria_id == filtroCategoria);
+  }
+  
+  // Temporariamente substituir tarefas para exibição
+  const tarefasOriginais = [...tarefas];
+  tarefas = tarefasFiltradas;
+  carregarTarefas();
+  tarefas = tarefasOriginais;
+}
+
+// Modal functions
+function abrirModalTarefa(tarefa = null) {
+  tarefaEditando = tarefa;
+  const modal = document.getElementById('modal-tarefa');
+  const title = document.getElementById('modal-title');
+  
+  if (tarefa) {
+    title.textContent = 'Editar Tarefa';
+    preencherFormulario(tarefa);
+  } else {
+    title.textContent = 'Nova Tarefa';
+    limparFormulario();
+  }
+  
+  modal.classList.add('show');
+}
+
+function fecharModalTarefa() {
+  document.getElementById('modal-tarefa').classList.remove('show');
+  tarefaEditando = null;
+}
+
+function preencherFormulario(tarefa) {
+  document.getElementById('tarefa-titulo').value = tarefa.titulo;
+  document.getElementById('tarefa-descricao').value = tarefa.descricao || '';
+  document.getElementById('tarefa-usuario').value = tarefa.usuario_id;
+  document.getElementById('tarefa-categoria').value = tarefa.categoria_id || '';
+  document.getElementById('tarefa-status').value = tarefa.status;
+  
+  if (tarefa.data_limite) {
+    document.getElementById('tarefa-data-limite').value = tarefa.data_limite.split('T')[0];
+  }
+}
+
+function limparFormulario() {
+  document.getElementById('form-tarefa').reset();
+}
+
+// Salvar tarefa
+async function salvarTarefa(event) {
+  event.preventDefault();
+  
+  const dados = {
+    titulo: document.getElementById('tarefa-titulo').value,
+    descricao: document.getElementById('tarefa-descricao').value,
+    usuario_id: document.getElementById('tarefa-usuario').value,
+    categoria_id: document.getElementById('tarefa-categoria').value || null,
+    status: document.getElementById('tarefa-status').value,
+    data_limite: document.getElementById('tarefa-data-limite').value || null
+  };
+  
+  try {
+    let response;
+    if (tarefaEditando) {
+      response = await fetch(`/api/tarefas/${tarefaEditando.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+    } else {
+      response = await fetch('/api/tarefas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+    }
+    
+    if (response.ok) {
+      fecharModalTarefa();
+      await carregarDados();
+      carregarTarefas();
+      alert('Tarefa salva com sucesso!');
+    } else {
+      throw new Error('Erro ao salvar tarefa');
+    }
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao salvar tarefa. Tente novamente.');
+  }
+}
+
+// Editar tarefa
+function editarTarefa(id) {
+  const tarefa = tarefas.find(t => t.id === id);
+  if (tarefa) {
+    abrirModalTarefa(tarefa);
+  }
+}
+
+// Excluir tarefa
+async function excluirTarefa(id) {
+  if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
+  
+  try {
+    const response = await fetch(`/api/tarefas/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      await carregarDados();
+      carregarTarefas();
+      alert('Tarefa excluída com sucesso!');
+    } else {
+      throw new Error('Erro ao excluir tarefa');
+    }
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao excluir tarefa. Tente novamente.');
+  }
+}
+
+// Funções auxiliares
+function getStatusBadgeClass(status) {
+  switch(status) {
+    case 'concluída': return 'badge-success';
+    case 'em progresso': return 'badge-warning';
+    case 'pendente': return 'badge-info';
+    default: return 'badge-info';
+  }
+}
+
+function formatarData(data) {
+  if (!data) return 'N/A';
+  return new Date(data).toLocaleDateString('pt-BR');
+}
+
+// Fechar modal clicando fora
+window.onclick = function(event) {
+  const modal = document.getElementById('modal-tarefa');
+  if (event.target === modal) {
+    fecharModalTarefa();
+  }
+}
+</script>

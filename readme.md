@@ -1,100 +1,213 @@
-# Inteli - Instituto de Tecnologia e Liderança 
+# Sistema de Gerenciamento de Tarefas - Tarefas+
 
-<p align="center">
-<a href= "https://www.inteli.edu.br/"><img src="/assets/assetsWAD/inteli.png" alt="Inteli - Instituto de Tecnologia e Liderança" border="0"></a>
-</p>
+Um sistema completo de gerenciamento de tarefas desenvolvido com Node.js, Express, PostgreSQL e EJS.
 
-# Sistema de Reserva de Salas do Inteli
+## 🚀 Funcionalidades
 
+### ✅ Implementadas na Ponderada 3
 
-## 
-- <a href="https://github.com/antonioatra">Henrique rodrigues diniz</a>
+- **Dashboard Interativo**: Visão geral com estatísticas e tarefas recentes
+- **Gerenciamento de Tarefas**: CRUD completo com status, categorias e datas limite
+- **Gerenciamento de Usuários**: Cadastro e edição de usuários do sistema
+- **Gerenciamento de Categorias**: Organização de tarefas por categorias
+- **Interface Responsiva**: Design moderno com CSS Grid e Flexbox
+- **Integração Frontend-Backend**: Fetch API para comunicação assíncrona
+- **Validações**: Validações no frontend e backend
+- **Notificações**: Sistema de notificações para feedback do usuário
 
-## :teacher: Professores:
-### Orientador(a) 
-- <a href="https://www.linkedin.com/in/marcelo-gon%C3%A7alves-phd-a550652/">Marcelo Gonçalves</a>
-### Instrutores
-- <a href="https://www.linkedin.com/in/cristiano-benites-ph-d-687647a8/">Cristiano Benites</a>
-- <a href="https://www.linkedin.com/in/pedroteberga/">Pedro Teberga</a> 
-- <a href="https://www.linkedin.com/in/francisco-escobar/">Francisco Escobar</a> 
-
-
-## 📝 Descrição
-
-&emsp; O Sistema de Reserva de Salas do Inteli é uma plataforma de agendamento que permite aos usuários reservar salas, visualizar disponibilidades e gerenciar seus agendamentos de forma prática e centralizada. Com foco na otimização do uso dos espaços da instituição, o sistema oferece funcionalidades como filtros por capacidade e recursos da sala, notificações automáticas e controle de permissões por tipo de usuário. A estrutura do banco de dados reflete essa lógica, conectando usuários, salas e reservas por meio de relacionamentos claros, garantindo um acompanhamento preciso de cada agendamento realizado.
-
-
-## 📝 Link de demonstração
-
-_Coloque aqui o link para seu projeto publicado e link para vídeo de demonstração_
-
-## 📁 Estrutura de pastas
-
-Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
+### 🎯 Arquitetura MVC
 
 ```
-Sistema de Reserva de Salas do Inteli/
-│
-├── config/                # Arquivos de configuração (ex: conexão com banco)
-│   └── database.js
-├── controllers/           # Lógica de controle das requisições
-│   └── HomeController.js
-├── models/                # Definição de modelos de dados (estrutura do banco)
-│   └── User.js
-├── routes/                # Definição das rotas do sistema
-│   └── index.js
-├── services/              # Serviços auxiliares do sistema
-│   └── userService.js
-├── assets/                # Arquivos públicos como imagens e fontes
-├── scripts/               # Arquivos de JavaScript públicos
-├── styles/                # Arquivos CSS públicos
-├── tests/                 # Arquivos de testes unitários
-│   └── example.test.js
-├── .gitignore             # Arquivo para ignorar arquivos no Git
-├── .env.example           # Arquivo de exemplo para variáveis de ambiente
-├── jest.config.js         # Arquivo de configuração do Jest
-├── package-lock.json      # Gerenciador de dependências do Node.js
-├── package.json           # Gerenciador de dependências do Node.js
-├── readme.md              # Documentação do projeto (Markdown)
-├── server.js              # Arquivo principal que inicializa o servidor
-├── rest.http              # Teste de endpoints (opcional)
-└── wad.md                 # Documentação
-
+📁 Projeto/
+├── 📁 config/          # Configurações (banco de dados)
+├── 📁 controllers/     # Controladores (lógica de negócio)
+├── 📁 models/          # Modelos (acesso aos dados)
+├── 📁 routes/          # Rotas da aplicação
+├── 📁 views/           # Views (EJS templates)
+│   ├── 📁 components/  # Componentes reutilizáveis
+│   ├── 📁 css/         # Estilos CSS
+│   ├── 📁 js/          # JavaScript do frontend
+│   ├── 📁 layout/      # Layout base
+│   └── 📁 pages/       # Páginas da aplicação
+├── 📁 scripts/         # Scripts de inicialização
+└── 📁 tests/           # Testes unitários
 ```
 
-## 💻 Configuração para desenvolvimento e execução do código
+## 🛠️ Tecnologias Utilizadas
 
+- **Backend**: Node.js + Express.js
+- **Banco de Dados**: PostgreSQL
+- **Template Engine**: EJS
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **CSS**: Design System personalizado com variáveis CSS
+- **Icons**: Font Awesome
+- **Testes**: Jest + Supertest
 
-Aqui encontram-se todas as instruções necessárias para a instalação de todos os programas, bibliotecas e ferramentas imprescindíveis para a configuração do ambiente de desenvolvimento.
+## 📋 Pré-requisitos
 
-1. Baixar e instalar o node.js: [https://nodejs.org/pt-br/](https://nodejs.org/pt-br/) (versão 16.15.1 LTS)
-2. Clone o repositório em questão.
-3. No modo administrador, abra o "prompt de comando" ou o "terminal" e, após, abra a pasta "src/backend" no diretório raiz do repositório clonado e digite o segundo comando:
+- Node.js (versão 16 ou superior)
+- PostgreSQL (versão 12 ou superior)
+- npm ou yarn
 
-```sh
+## ⚙️ Configuração e Instalação
+
+### 1. Clone o repositório
+```bash
+git clone [url-do-repositorio]
+cd sistema-tarefas
+```
+
+### 2. Instale as dependências
+```bash
 npm install
 ```
 
-Isso instalará todas as dependências definidas no arquivo <b>package.json</b> que são necessárias para rodar o projeto. Agora o projeto já está pronto para ser modificado. Caso ainda deseje iniciar a aplicação, digite o comando abaixo no terminal:
+### 3. Configure o banco de dados
+Crie um arquivo `.env` na raiz do projeto:
+```env
+DB_USER=seu_usuario
+DB_HOST=localhost
+DB_DATABASE=nome_do_banco
+DB_PASSWORD=sua_senha
+DB_PORT=5432
+```
 
-```sh
+### 4. Execute o script de inicialização do banco
+```bash
+npm run init-db
+```
+
+### 5. Inicie o servidor
+```bash
+# Modo desenvolvimento (com nodemon)
+npm run dev
+
+# Modo produção
 npm start
 ```
-5. Agora você pode acessar a aplicação através do link http://localhost:1234/
-6. O servidor está online.
 
-## 🗃 Histórico de lançamentos
+### 6. Acesse a aplicação
+Abra o navegador em: `http://localhost:3333`
 
-* 0.5.0 - XX/XX/2024
-    * 
-* 0.4.0 - XX/XX/2024
-    * 
-* 0.3.0 - XX/XX/2024
-    * 
-* 0.2.0 - XX/XX/2024
-    * 
-* 0.1.0 - 30/04/2025 - Levantamento inicial do projeto, com entendimento do negócio, definição dos objetivos e escopo da primeira versão da Aplicação Web.
-    *
+## 🎨 Interface do Sistema
 
-## 📋 Licença/License
+### Dashboard
+- **Estatísticas**: Total de tarefas, usuários, categorias e tarefas concluídas
+- **Tarefas Recentes**: Lista das últimas tarefas criadas
+- **Ações Rápidas**: Botões para acessar funcionalidades principais
 
+### Gerenciamento de Tarefas
+- **Lista Completa**: Visualização de todas as tarefas com filtros
+- **Modal de Edição**: Formulário para criar/editar tarefas
+- **Filtros**: Por status e categoria
+- **Status**: Pendente, Em Progresso, Concluída
+
+### Gerenciamento de Usuários
+- **CRUD Completo**: Criar, listar, editar e excluir usuários
+- **Validações**: Email único e campos obrigatórios
+
+### Gerenciamento de Categorias
+- **Organização**: Criação e edição de categorias
+- **Proteção**: Não permite excluir categorias com tarefas associadas
+
+## 🔧 Scripts Disponíveis
+
+```bash
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Iniciar servidor de produção
+npm start
+
+# Executar testes
+npm test
+
+# Executar testes com coverage
+npm run test:coverage
+
+# Inicializar banco de dados
+npm run init-db
+```
+
+## 📡 API Endpoints
+
+### Tarefas
+- `GET /api/tarefas` - Listar todas as tarefas
+- `POST /api/tarefas` - Criar nova tarefa
+- `PUT /api/tarefas/:id` - Atualizar tarefa
+- `DELETE /api/tarefas/:id` - Excluir tarefa
+
+### Usuários
+- `GET /api/usuarios` - Listar usuários
+- `POST /api/usuarios` - Criar usuário
+- `PUT /api/usuarios/:id` - Atualizar usuário
+- `DELETE /api/usuarios/:id` - Excluir usuário
+
+### Categorias
+- `GET /api/categorias` - Listar categorias
+- `POST /api/categorias` - Criar categoria
+- `PUT /api/categorias/:id` - Atualizar categoria
+- `DELETE /api/categorias/:id` - Excluir categoria
+
+## 🧪 Testes
+
+O projeto inclui testes unitários para:
+- Controllers
+- Models
+- Routes
+- Services
+
+Execute os testes com:
+```bash
+npm test
+```
+
+## 🎯 Requisitos da Ponderada 3 Implementados
+
+### ✅ Passo 1 - Construção das Views
+- [x] Páginas EJS organizadas na pasta `views/`
+- [x] Views conectadas às rotas do Express
+- [x] Dados vindos diretamente do banco via backend
+- [x] Uso do `res.render()` para renderização
+
+### ✅ Passo 2 - Integração Frontend-Backend via Fetch API
+- [x] Interface interativa com botões funcionais
+- [x] Comunicação via `fetch()` para operações CRUD
+- [x] Rotas de API separadas (`/api/*`)
+- [x] Tratamento de erros e feedback visual
+
+### ✅ Passo 3 - Estilização com CSS
+- [x] CSS moderno e responsivo
+- [x] Sistema de design consistente
+- [x] Uso de Flexbox e CSS Grid
+- [x] Feedback visual para interações
+- [x] Modais e animações
+
+### ✅ Requisitos Mínimos
+- [x] Views conectadas exibindo dados reais
+- [x] Estilização CSS aplicada com layout organizado
+- [x] Integração front-back com Fetch API
+- [x] Estrutura MVC mantida
+- [x] Código executável com `npm start`
+
+## 🔄 Próximas Melhorias
+
+- [ ] Sistema de autenticação
+- [ ] Notificações em tempo real
+- [ ] Relatórios e dashboards avançados
+- [ ] API REST completa
+- [ ] Testes de integração
+- [ ] Deploy em produção
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins educacionais como parte do curso no Inteli - Instituto de Tecnologia e Liderança.
+
+## 👥 Autor
+
+**Henrique Rodrigues Diniz**
+- LinkedIn: [henrique-rodrigues-diniz](https://www.linkedin.com/in/henrique-rodrigues-diniz-b7b011319/)
+
+---
+
+**Inteli - Instituto de Tecnologia e Liderança**
