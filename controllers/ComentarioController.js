@@ -40,18 +40,10 @@ exports.editarComentario = async (req, res) => {
 
 exports.excluirComentario = async (req, res) => {
   try {
-    const comentario = await ComentarioModel.excluir(req.params.id);
-    if (!comentario) return res.status(404).json({ message: 'Comentário não encontrado' });
-    res.json({ message: 'Comentário excluído com sucesso' });
+    const resultado = await ComentarioModel.excluir(req.params.id);
+    if (!resultado) return res.status(404).json({ message: 'Comentário não encontrado' });
+    res.status(200).json({ message: 'Comentário excluído com sucesso' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
-
-module.exports = {
-  listarComentarios: exports.listarComentarios,
-  obterComentarioPorId: exports.obterComentarioPorId,
-  criarComentario: exports.criarComentario,
-  editarComentario: exports.editarComentario,
-  excluirComentario: exports.excluirComentario
 };

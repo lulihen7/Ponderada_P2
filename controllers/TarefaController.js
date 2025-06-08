@@ -40,18 +40,48 @@ exports.editarTarefa = async (req, res) => {
 
 exports.excluirTarefa = async (req, res) => {
   try {
-    const tarefa = await TarefaModel.excluir(req.params.id);
-    if (!tarefa) return res.status(404).json({ message: 'Tarefa não encontrada' });
-    res.json({ message: 'Tarefa excluída com sucesso' });
+    const resultado = await TarefaModel.excluir(req.params.id);
+    if (!resultado) return res.status(404).json({ message: 'Tarefa não encontrada' });
+    res.status(200).json({ message: 'Tarefa excluída com sucesso' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = {
-  listarTarefas: exports.listarTarefas,
-  obterTarefaPorId: exports.obterTarefaPorId,
-  criarTarefa: exports.criarTarefa,
-  editarTarefa: exports.editarTarefa,
-  excluirTarefa: exports.excluirTarefa
+exports.marcarConcluida = async (req, res) => {
+  try {
+    const tarefa = await TarefaModel.atualizar(req.params.id, { concluida: true });
+    if (!tarefa) return res.status(404).json({ message: 'Tarefa não encontrada' });
+    res.json(tarefa);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.desmarcarConcluida = async (req, res) => {
+  try {
+    const tarefa = await TarefaModel.atualizar(req.params.id, { concluida: false });
+    if (!tarefa) return res.status(404).json({ message: 'Tarefa não encontrada' });
+    res.json(tarefa);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.listarTarefasConcluidas = async (req, res) => {
+  try {
+    const tarefas = await TarefaModel.filtrar({ concluida: true });
+    res.json(tarefas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.listarTarefasPendentes = async (req, res) => {
+  try {
+    const tarefas = await TarefaModel.filtrar({ concluida: false });
+    res.json(tarefas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

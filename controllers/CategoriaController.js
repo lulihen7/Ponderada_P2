@@ -40,18 +40,10 @@ exports.editarCategoria = async (req, res) => {
 
 exports.excluirCategoria = async (req, res) => {
   try {
-    const categoria = await CategoriaModel.excluir(req.params.id);
-    if (!categoria) return res.status(404).json({ message: 'Categoria não encontrada' });
-    res.json({ message: 'Categoria excluída com sucesso' });
+    const resultado = await CategoriaModel.excluir(req.params.id);
+    if (!resultado) return res.status(404).json({ message: 'Categoria não encontrada' });
+    res.status(200).json({ message: 'Categoria excluída com sucesso' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
-
-module.exports = {
-  listarCategorias: exports.listarCategorias,
-  obterCategoriaPorId: exports.obterCategoriaPorId,
-  criarCategoria: exports.criarCategoria,
-  editarCategoria: exports.editarCategoria,
-  excluirCategoria: exports.excluirCategoria
 };
