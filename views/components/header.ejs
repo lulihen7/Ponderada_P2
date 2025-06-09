@@ -1,48 +1,264 @@
-<%- include('partials/header') %>
-<%- include('partials/navbar') %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Tarefas+ | Sistema de Gerenciamento' %></title>
+  
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- CSS Principal -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Meta tags para SEO e PWA -->
+  <meta name="description" content="Sistema moderno de gerenciamento de tarefas com interface elegante e funcionalidades avançadas">
+  <meta name="theme-color" content="#667eea">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✅%3C/text%3E%3C/svg%3E">
+</head>
+<body data-page="<%= typeof currentPage !== 'undefined' ? currentPage : '' %>">
+  
+  <!-- Partículas flutuantes de fundo -->
+  <div class="floating-particles" id="particles-container"></div>
+  
+  <!-- Header Principal -->
+  <header class="header">
+    <nav class="navbar">
+      <!-- Logo -->
+      <a href="/" class="logo">
+        <i class="fas fa-check-double"></i>
+        Tarefas<span style="font-weight: 300;">+</span>
+      </a>
+      
+      <!-- Navegação -->
+      <ul class="nav-links">
+        <li>
+          <a href="/" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'active' : '' %>">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="/tarefas-page" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'tarefas' ? 'active' : '' %>">
+            <i class="fas fa-tasks"></i>
+            Tarefas
+          </a>
+        </li>
+        <li>
+          <a href="/usuarios-page" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'usuarios' ? 'active' : '' %>">
+            <i class="fas fa-users"></i>
+            Usuários
+          </a>
+        </li>
+        <li>
+          <a href="/categorias-page" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'categorias' ? 'active' : '' %>">
+            <i class="fas fa-tags"></i>
+            Categorias
+          </a>
+        </li>
+      </ul>
+      
+      <!-- Ações do Header -->
+      <div class="header-actions">
+        <!-- Toggle de Tema -->
+        <button class="theme-toggle" title="Alternar tema">
+          <i class="fas fa-moon"></i>
+        </button>
+        
+        <!-- Botão de Ação Rápida -->
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" id="quick-actions">
+            <i class="fas fa-plus"></i>
+            <span class="hidden-mobile">Criar</span>
+            <i class="fas fa-chevron-down" style="font-size: 0.75em; opacity: 0.7;"></i>
+          </button>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item" onclick="abrirModalTarefa?.()">
+              <i class="fas fa-task"></i>
+              Nova Tarefa
+            </a>
+            <a href="#" class="dropdown-item" onclick="abrirModalUsuario?.()">
+              <i class="fas fa-user-plus"></i>
+              Novo Usuário
+            </a>
+            <a href="#" class="dropdown-item" onclick="abrirModalCategoria?.()">
+              <i class="fas fa-tag"></i>
+              Nova Categoria
+            </a>
+          </div>
+        </div>
+        
+        <!-- Indicador de Status (exemplo) -->
+        <div class="status-indicator online" title="Sistema online"></div>
+      </div>
+    </nav>
+  </header>
 
-<main class="container">
-  <div class="error-container">
-    <div class="error-content">
-      <h1 class="error-code"><%= error.status || 500 %></h1>
-      <h2 class="error-title"><%= title %></h2>
-      <p class="error-message"><%= message %></p>
-      <a href="/" class="btn btn-primary">Voltar ao início</a>
-    </div>
-  </div>
-</main>
+  <!-- Container de Notificações -->
+  <div id="notifications-container"></div>
 
-<style>
-.error-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.error-content {
-  text-align: center;
-  background: white;
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.error-code {
-  font-size: 4rem;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-}
-
-.error-title {
-  color: var(--dark-gray);
-  margin-bottom: 1rem;
-}
-
-.error-message {
-  color: var(--gray);
-  margin-bottom: 2rem;
-}
-</style>
-
-<%- include('partials/footer') %>
+  <!-- Scripts -->
+  <script src="/js/main.js"></script>
+  
+  <!-- Script para criar partículas -->
+  <script>
+    // Criar partículas flutuantes
+    function createParticles() {
+      const container = document.getElementById('particles-container');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        container.appendChild(particle);
+      }
+    }
+    
+    // Dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdown = document.querySelector('.dropdown');
+      const toggle = dropdown?.querySelector('.dropdown-toggle');
+      
+      if (toggle) {
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          dropdown.classList.toggle('active');
+        });
+        
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(e) {
+          if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+          }
+        });
+      }
+      
+      // Criar partículas após carregamento
+      createParticles();
+      
+      // Adicionar classe para animações de entrada
+      setTimeout(() => {
+        document.querySelectorAll('.nav-link, .btn, .logo').forEach((el, index) => {
+          setTimeout(() => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-20px)';
+            el.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            requestAnimationFrame(() => {
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+            });
+          }, index * 100);
+        });
+      }, 100);
+    });
+  </script>
+  
+  <!-- Estilos adicionais específicos do header -->
+  <style>
+    .hidden-mobile {
+      display: inline;
+    }
+    
+    @media (max-width: 768px) {
+      .hidden-mobile {
+        display: none;
+      }
+      
+      .header-actions {
+        gap: 0.5rem;
+      }
+      
+      .btn {
+        padding: 0.75rem;
+      }
+    }
+    
+    /* Animação específica para o logo */
+    .logo {
+      position: relative;
+    }
+    
+    .logo::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .logo:hover::after {
+      width: 100%;
+    }
+    
+    /* Efeito de brilho no status indicator */
+    .status-indicator {
+      animation: statusGlow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes statusGlow {
+      from { box-shadow: 0 0 5px currentColor; }
+      to { box-shadow: 0 0 15px currentColor, 0 0 25px currentColor; }
+    }
+    
+    /* Melhorar aparência do dropdown */
+    .dropdown-menu {
+      border: none;
+      box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(102, 126, 234, 0.1);
+    }
+    
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .dropdown-item i {
+      width: 16px;
+      text-align: center;
+      opacity: 0.7;
+    }
+    
+    /* Efeito de scroll no header */
+    .header.scrolled {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    [data-theme="dark"] .header.scrolled {
+      background: rgba(15, 23, 42, 0.95);
+    }
+  </style>
+  
+  <!-- Script para efeito de scroll no header -->
+  <script>
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('.header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>
