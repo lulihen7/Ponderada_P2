@@ -4,10 +4,21 @@
 <main class="container">
   <div class="error-container">
     <div class="error-content">
-      <h1 class="error-code"><%= error.status || 500 %></h1>
-      <h2 class="error-title"><%= title %></h2>
-      <p class="error-message"><%= message %></p>
-      <a href="/" class="btn btn-primary">Voltar ao início</a>
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h1 class="error-code"><%= error?.status || 500 %></h1>
+      <h2 class="error-title"><%= title || 'Erro no Sistema' %></h2>
+      <p class="error-message"><%= message || 'Algo deu errado. Tente novamente.' %></p>
+      
+      <div class="error-actions">
+        <a href="/" class="btn btn-primary">
+          <i class="fas fa-home"></i> Voltar ao Início
+        </a>
+        <button onclick="history.back()" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+      </div>
     </div>
   </div>
 </main>
@@ -17,31 +28,97 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 50vh;
+  min-height: 60vh;
+  padding: 2rem;
 }
 
 .error-content {
   text-align: center;
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  border: 1px solid var(--gray-200);
+  max-width: 500px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .error-content {
+  background: rgba(30, 41, 55, 0.95);
+  border-color: var(--gray-700);
+}
+
+.error-icon {
+  font-size: 4rem;
+  color: var(--warning-solid);
+  margin-bottom: 1.5rem;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .error-code {
-  font-size: 4rem;
-  color: var(--primary-color);
+  font-size: 5rem;
+  font-weight: 800;
+  background: var(--primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 1rem;
+  line-height: 1;
 }
 
 .error-title {
-  color: var(--dark-gray);
+  color: var(--gray-900);
   margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .error-message {
-  color: var(--gray);
+  color: var(--gray-600);
   margin-bottom: 2rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .error-container {
+    padding: 1rem;
+  }
+  
+  .error-content {
+    padding: 2rem;
+  }
+  
+  .error-code {
+    font-size: 3.5rem;
+  }
+  
+  .error-title {
+    font-size: 1.25rem;
+  }
+  
+  .error-actions {
+    flex-direction: column;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
 }
 </style>
 

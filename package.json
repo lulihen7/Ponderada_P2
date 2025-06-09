@@ -28,7 +28,13 @@
   "directories": {
     "test": "tests"
   },
-  "keywords": ["nodejs", "express", "postgresql", "mvc", "tarefas"],
+  "keywords": [
+    "nodejs",
+    "express",
+    "postgresql",
+    "mvc",
+    "tarefas"
+  ],
   "author": "Henrique Rodrigues Diniz",
   "license": "ISC"
 }

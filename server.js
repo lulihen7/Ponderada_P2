@@ -69,3 +69,6 @@ app.listen(port, () => {
   console.log(`🚀 Servidor rodando na porta ${port}`);
   console.log(`📱 Acesse: http://localhost:${port}`);
 });
+// Configurar EJS como template engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
