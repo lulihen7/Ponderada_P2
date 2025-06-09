@@ -1,139 +1,602 @@
-# Web Application Document - Projeto Individual - Módulo 2 - Inteli
+# WAD - Web Application Document
+# Sistema Tarefas+ - Documentação Completa de Endpoints
 
-## Sistema de Reserva de Salas do Inteli
+# Henrique Rodrigues Diniz
 
-#### [Henrique rodrigues diniz](https://www.linkedin.com/in/henrique-rodrigues-diniz-b7b011319/)
-
-## Sumário
-
-1. [Introdução](#c1)  
-2. [Visão Geral da Aplicação Web](#c2)  
-3. [Projeto Técnico da Aplicação Web](#c3)  
-4. [Desenvolvimento da Aplicação Web](#c4)  
-5. [Referências](#c5)  
-
-<br>
-
-## <a name="c1"></a>1. Introdução (Semana 01)
-
-## 1. Introdução
-
-O **Sistema de Reserva de Salas do Inteli** é uma aplicação web desenvolvida para facilitar o processo de agendamento de salas de estudo, salas de reunião e espaços multiuso dentro da instituição. Seu objetivo principal é **otimizar a gestão dos espaços físicos**, evitando conflitos de horários e garantindo que os usuários tenham acesso rápido e confiável às informações de disponibilidade.
-
-Por meio da plataforma, os usuários podem **visualizar as salas disponíveis**, **realizar reservas**, **cancelar agendamentos** e acompanhar suas reservas anteriores. O sistema foi projetado para atender tanto **estudantes**, que precisam reservar salas para trabalhos em grupo, quanto **professores e colaboradores**, que utilizam os espaços para reuniões, aulas e atividades acadêmicas. A aplicação busca oferecer uma **experiência intuitiva e eficiente**, com funcionalidades que simplificam o agendamento, reduzem o risco de conflitos e promovem uma melhor utilização dos recursos físicos da instituição.
-
-
-
+## 📑 Índice
+1. [Visão Geral](#visão-geral)
+2. [Configuração Base](#🔧-configuração-base)
+3. [Endpoints de API](#📋-endpoints-de-api)
+   - [Tarefas](#tarefas-apitarefas)
+   - [Usuários](#usuários-apiusuarios)
+   - [Categorias](#categorias-apicategorias)
+   - [Comentários](#comentários-apicomentarios)
+4. [Rotas de Interface](#🌐-rotas-de-interface-frontend)
+5. [Códigos de Status](#❌-códigos-de-status-http)
+6. [Estrutura do Banco](#🔧-estrutura-do-banco-de-dados)
+7. [Como Executar](#🚀-como-executar-o-sistema)
+8. [Testando a API](#🧪-testando-a-api)
+9. [Exemplos de Uso](#📝-exemplos-de-uso)
+10. [Regras de Negócio](#🛡️-validações-e-regras-de-negócio)
+11. [Melhorias Planejadas](#🔄-próximas-melhorias-planejadas)
+12. [Características Técnicas](#🏗️-características-técnicas)
 
 ---
 
-## <a name="c2"></a>2. Visão Geral da Aplicação Web
-
-### 2.1. Personas (Semana 01 - opcional)
-
-*Posicione aqui sua(s) Persona(s) em forma de texto markdown com imagens, ou como imagem de template preenchido. Atualize esta seção ao longo do módulo se necessário.*
-
-### 2.2. User Stories (Semana 01 - opcional)
-
-*Posicione aqui a lista de User Stories levantadas para o projeto. Siga o template de User Stories e utilize a referência USXX para numeração (US01, US02, US03, ...). Indique todas as User Stories mapeadas, mesmo aquelas que não forem implementadas ao longo do projeto. Não se esqueça de explicar o INVEST de 1 User Storie prioritária.*
+## Visão Geral
+O sistema Tarefas+ possui uma arquitetura RESTful com endpoints para gerenciamento de tarefas, usuários, categorias e comentários. A aplicação segue o padrão MVC e oferece tanto endpoints de API quanto rotas para renderização de páginas.
 
 ---
 
-## <a name="c3"></a>3. Projeto da Aplicação Web
+## 🔧 Configuração Base
+- **URL Base da API**: `/api`
+- **Método de Autenticação**: Nenhum (sistema educacional)
+- **Formato de Resposta**: JSON
+- **Content-Type**: `application/json`
 
+---
 
-## 3. Projeto da Aplicação Web
+## 📋 Endpoints de API
 
-### 3.1. Modelagem do Banco de Dados (Semana 3)
+### **Características Gerais dos Endpoints**
+- Todos os endpoints retornam JSON
+- Tratamento de erros padronizado com status HTTP apropriados
+- Validações no servidor para dados obrigatórios
+- Relacionamentos automáticos via JOINs para dados completos
 
-A modelagem do banco de dados do sistema de Gerenciamento de Tarefas foi projetada com base em um modelo relacional que reflete as necessidades funcionais da aplicação, garantindo organização, consistência e escalabilidade dos dados. O sistema é estruturado em quatro entidades principais: **Usuários (usuarios)**, **Categorias (categorias)**, **Tarefas (tarefas)** e **Comentários (comentarios)**. Cada entidade foi definida para suportar funcionalidades essenciais como cadastro, organização de tarefas e comunicação via comentários.
+### **TAREFAS** (`/api/tarefas`)
 
-Abaixo está o script SQL completo para criação das tabelas e relacionamentos:
-
-```sql
--- Criação da tabela de usuários
-CREATE TABLE usuarios (
-  id SERIAL PRIMARY KEY,                                    -- Identificador único do usuário com auto-incremento
-  nome VARCHAR(100) NOT NULL,                               -- Nome do usuário
-  email VARCHAR(100) UNIQUE NOT NULL,                       -- Email único para cada usuário
-  senha_hash TEXT NOT NULL,                                 -- Hash da senha para segurança
-  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- Data de criação do registro
-);
-
--- Criação da tabela de categorias de tarefas (opcional)
-CREATE TABLE categorias (
-  id SERIAL PRIMARY KEY,                                    -- Identificador único da categoria
-  nome VARCHAR(50) NOT NULL                                 -- Nome descritivo da categoria
-);
-
--- Criação da tabela de tarefas
-CREATE TABLE tarefas (
-  id SERIAL PRIMARY KEY,                                    -- Identificador único da tarefa
-  usuario_id INT NOT NULL,                                  -- Referência obrigatória ao usuário que criou a tarefa
-  titulo VARCHAR(255) NOT NULL,                             -- Título descritivo da tarefa
-  descricao TEXT,                                           -- Descrição opcional da tarefa
-  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- Data de criação da tarefa
-  data_limite DATE,                                         -- Data limite para conclusão (opcional)
-  status VARCHAR(20) DEFAULT 'pendente' CHECK (status IN ('pendente', 'em progresso', 'concluída')), -- Status com validação
-  categoria_id INT,                                         -- Referência opcional a uma categoria
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id),         -- Chave estrangeira para usuário
-  FOREIGN KEY (categoria_id) REFERENCES categorias(id)      -- Chave estrangeira para categoria
-);
-
--- Criação da tabela de comentários para cada tarefa (opcional)
-CREATE TABLE comentarios (
-  id SERIAL PRIMARY KEY,                                    -- Identificador único do comentário
-  tarefa_id INT NOT NULL,                                   -- Referência à tarefa comentada
-  usuario_id INT NOT NULL,                                  -- Referência ao usuário que comentou
-  texto TEXT NOT NULL,                                      -- Texto do comentário
-  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- Data de criação do comentário
-  FOREIGN KEY (tarefa_id) REFERENCES tarefas(id),           -- Chave estrangeira para tarefa
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)          -- Chave estrangeira para usuário
+#### 1. Listar Todas as Tarefas
+```http
+GET /api/tarefas
 ```
-);
-3.1.1. Explicação do Modelo de Dados
-Tabela usuarios
-Armazena as informações dos usuários do sistema. Inclui nome, email (único), senha (hash para segurança) e data de criação.
-A chave primária id garante a identificação única de cada usuário.
+**Descrição**: Retorna todas as tarefas cadastradas com informações de usuário e categoria.
 
-Tabela categorias
-Permite organizar tarefas em categorias. Cada categoria tem um identificador e um nome descritivo.
+**Resposta de Sucesso (200)**:
+```json
+[
+  {
+    "id": 1,
+    "titulo": "Finalizar relatório mensal",
+    "descricao": "Completar o relatório de vendas do mês",
+    "usuario_id": 1,
+    "usuario_nome": "João Silva",
+    "categoria_id": 1,
+    "categoria_nome": "Trabalho",
+    "status": "em progresso",
+    "data_criacao": "2024-01-15T10:30:00.000Z",
+    "data_limite": "2024-01-18"
+  }
+]
+```
 
-Tabela tarefas
-Núcleo do sistema, armazena as tarefas com título, descrição, data de criação, data limite opcional, status e categoria.
-Cada tarefa pertence a um usuário (via usuario_id) e pode opcionalmente estar vinculada a uma categoria (categoria_id).
-O campo status restringe os valores para garantir a consistência dos dados.
+#### 2. Obter Tarefa por ID
+```http
+GET /api/tarefas/:id
+```
+**Parâmetros**:
+- `id` (number): ID da tarefa
 
-Tabela comentarios
-Permite comentários em tarefas, vinculando cada comentário ao usuário que o fez e à tarefa correspondente.
-Suporta a comunicação e o acompanhamento das atividades.
+**Resposta de Sucesso (200)**:
+```json
+{
+  "id": 1,
+  "titulo": "Finalizar relatório mensal",
+  "descricao": "Completar o relatório de vendas do mês",
+  "usuario_id": 1,
+  "usuario_nome": "João Silva",
+  "categoria_id": 1,
+  "categoria_nome": "Trabalho",
+  "status": "em progresso",
+  "data_criacao": "2024-01-15T10:30:00.000Z",
+  "data_limite": "2024-01-18"
+}
+```
 
-3.1.2. Executando o Script do Banco de Dados
-Certifique-se de que o PostgreSQL está instalado e em execução.
+**Resposta de Erro (404)**:
+```json
+{
+  "message": "Tarefa não encontrada"
+}
+```
 
-Abra seu cliente PostgreSQL preferido (psql, DBeaver, TablePlus).
+#### 3. Criar Nova Tarefa
+```http
+POST /api/tarefas
+```
+**Corpo da Requisição**:
+```json
+{
+  "titulo": "Nova tarefa",
+  "descricao": "Descrição da tarefa",
+  "usuario_id": 1,
+  "categoria_id": 2,
+  "status": "pendente",
+  "data_limite": "2024-01-25"
+}
+```
 
-Execute o script SQL acima para criar as tabelas e relacionamentos.
+**Campos**:
+- `titulo` (string, obrigatório): Título da tarefa
+- `descricao` (string, opcional): Descrição detalhada
+- `usuario_id` (number, obrigatório): ID do usuário responsável
+- `categoria_id` (number, opcional): ID da categoria
+- `status` (string, opcional): "pendente" | "em progresso" | "concluída" (padrão: "pendente")
+- `data_limite` (date, opcional): Data limite para conclusão
 
-```psql -U seu_usuario -d seu_banco -a -f caminho/para/o_script.sql```
+**Resposta de Sucesso (201)**:
+```json
+{
+  "id": 7,
+  "titulo": "Nova tarefa",
+  "descricao": "Descrição da tarefa",
+  "usuario_id": 1,
+  "categoria_id": 2,
+  "status": "pendente",
+  "data_criacao": "2024-01-15T14:30:00.000Z",
+  "data_limite": "2024-01-25"
+}
+```
 
-## <a name="c4"></a>4. Desenvolvimento da Aplicação Web (Semana 8)
+#### 4. Atualizar Tarefa
+```http
+PUT /api/tarefas/:id
+```
+**Corpo da Requisição**: (Mesma estrutura do POST, todos os campos opcionais)
 
-### 4.1 Demonstração do Sistema Web (Semana 8)
+#### 5. Excluir Tarefa
+```http
+DELETE /api/tarefas/:id
+```
+**Funcionalidade**: Remove a tarefa e TODOS os comentários associados automaticamente.
 
-*VIDEO: Insira o link do vídeo demonstrativo nesta seção*
-*Descreva e ilustre aqui o desenvolvimento do sistema web completo, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+**Resposta de Sucesso (200)**:
+```json
+{
+  "message": "Tarefa excluída com sucesso"
+}
+```
 
-### 4.2 Conclusões e Trabalhos Futuros (Semana 8)
+### **⚠️ Endpoints Implementados mas Não Roteados**
+Os seguintes métodos existem no `TarefaController` mas não possuem rotas definidas:
+- `marcarConcluida()` - Marca tarefa como concluída
+- `desmarcarConcluida()` - Remove status de concluída  
+- `listarTarefasConcluidas()` - Lista apenas tarefas concluídas
+- `listarTarefasPendentes()` - Lista apenas tarefas pendentes
 
-*Indique pontos fortes e pontos a melhorar de maneira geral.*
-*Relacione também quaisquer outras ideias que você tenha para melhorias futuras.*
-
-
-
-## <a name="c5"></a>5. Referências
-
-_Incluir as principais referências de seu projeto, para que o leitor possa consultar caso ele se interessar em aprofundar._<br>
+**Uso atual**: A funcionalidade é implementada via PUT geral atualizando o campo `status`.
 
 ---
+
+### **USUÁRIOS** (`/api/usuarios`)
+
+#### 1. Listar Todos os Usuários
+```http
+GET /api/usuarios
+```
+**Resposta de Sucesso (200)**:
+```json
+[
+  {
+    "id": 1,
+    "nome": "João Silva",
+    "email": "joao@email.com",
+    "senha_hash": "hash_placeholder",
+    "data_criacao": "2024-01-10T08:00:00.000Z"
+  }
+]
+```
+
+#### 2. Obter Usuário por ID
+```http
+GET /api/usuarios/:id
+```
+
+#### 3. Criar Novo Usuário
+```http
+POST /api/usuarios
+```
+**Corpo da Requisição**:
+```json
+{
+  "nome": "Maria Santos",
+  "email": "maria@email.com"
+}
+```
+
+**Campos**:
+- `nome` (string, obrigatório): Nome completo do usuário
+- `email` (string, obrigatório): Email único do usuário
+
+**Validações**:
+- Email deve ser único no sistema
+- Ambos os campos são obrigatórios
+
+**Resposta de Erro - Email Duplicado (400)**:
+```json
+{
+  "error": "Email já está em uso"
+}
+```
+
+**Resposta de Erro - Campos Obrigatórios (400)**:
+```json
+{
+  "error": "Nome e email são obrigatórios"
+}
+```
+
+#### 4. Atualizar Usuário
+```http
+PUT /api/usuarios/:id
+```
+
+#### 5. Excluir Usuário
+```http
+DELETE /api/usuarios/:id
+```
+
 ---
+
+### **CATEGORIAS** (`/api/categorias`)
+
+#### 1. Listar Todas as Categorias
+```http
+GET /api/categorias
+```
+**Resposta de Sucesso (200)**:
+```json
+[
+  {
+    "id": 1,
+    "nome": "Trabalho"
+  },
+  {
+    "id": 2,
+    "nome": "Pessoal"
+  }
+]
+```
+
+#### 2. Obter Categoria por ID
+```http
+GET /api/categorias/:id
+```
+
+#### 3. Criar Nova Categoria
+```http
+POST /api/categorias
+```
+**Corpo da Requisição**:
+```json
+{
+  "nome": "Estudos"
+}
+```
+
+#### 4. Atualizar Categoria
+```http
+PUT /api/categorias/:id
+```
+
+#### 5. Excluir Categoria
+```http
+DELETE /api/categorias/:id
+```
+**Restrições**: 
+- Não é possível excluir categorias que possuem tarefas associadas
+- O model verifica automaticamente e retorna erro se houver tarefas vinculadas
+
+**Resposta de Erro (400)**:
+```json
+{
+  "error": "Não é possível excluir categoria com tarefas associadas"
+}
+```
+
+---
+
+### **COMENTÁRIOS** (`/api/comentarios`)
+
+#### 1. Listar Todos os Comentários
+```http
+GET /api/comentarios
+```
+**Resposta de Sucesso (200)**:
+```json
+[
+  {
+    "id": 1,
+    "tarefa_id": 1,
+    "usuario_id": 1,
+    "usuario_nome": "João Silva",
+    "texto": "Preciso revisar os números da última semana",
+    "data_criacao": "2024-01-15T15:30:00.000Z"
+  }
+]
+```
+
+#### 2. Obter Comentário por ID
+```http
+GET /api/comentarios/:id
+```
+
+#### 3. Criar Novo Comentário
+```http
+POST /api/comentarios
+```
+**Corpo da Requisição**:
+```json
+{
+  "tarefa_id": 1,
+  "usuario_id": 1,
+  "texto": "Comentário sobre a tarefa"
+}
+```
+
+#### 4. Atualizar Comentário
+```http
+PUT /api/comentarios/:id
+```
+
+#### 5. Excluir Comentário
+```http
+DELETE /api/comentarios/:id
+```
+
+---
+
+## 🌐 Rotas de Interface (Frontend)
+
+### **Arquitetura Frontend-Backend**
+Todas as páginas EJS fazem requisições AJAX via `fetch()` para os endpoints da API. O fluxo é:
+1. Servidor renderiza página EJS com layout básico
+2. JavaScript no cliente carrega dados via API endpoints
+3. Interface atualiza dinamicamente com os dados recebidos
+4. Operações CRUD são feitas via fetch para `/api/*` endpoints
+
+### **Páginas Principais**
+
+#### 1. Dashboard Principal
+```http
+GET /
+```
+**Renderiza**: `pages/dashboard.ejs`
+**Descrição**: Página inicial com estatísticas e tarefas recentes
+
+#### 2. Gerenciamento de Tarefas
+```http
+GET /tarefas-page
+```
+**Renderiza**: `pages/tarefas.ejs`
+**Descrição**: Interface para CRUD de tarefas com filtros
+
+#### 3. Gerenciamento de Usuários
+```http
+GET /usuarios-page
+```
+**Renderiza**: `pages/usuarios.ejs`
+**Descrição**: Interface para CRUD de usuários
+
+#### 4. Gerenciamento de Categorias
+```http
+GET /categorias-page
+```
+**Renderiza**: `pages/categorias.ejs`
+**Descrição**: Interface para CRUD de categorias
+
+### **Recursos do Frontend**
+- **Modais Dinâmicos**: Para criação/edição de recursos
+- **Filtros em Tempo Real**: Na página de tarefas (por status e categoria)
+- **Validações Client-Side**: Campos obrigatórios e formato de email
+- **Notificações**: Sistema de feedback visual para operações
+- **Responsividade**: Layout adaptável para dispositivos móveis
+- **Tema Claro/Escuro**: Toggle de tema com persistência local
+
+---
+
+## ❌ Códigos de Status HTTP
+
+| Código | Descrição | Quando Ocorre |
+|--------|-----------|---------------|
+| 200 | OK | Operação bem-sucedida |
+| 201 | Created | Recurso criado com sucesso |
+| 400 | Bad Request | Dados inválidos ou campos obrigatórios ausentes |
+| 404 | Not Found | Recurso não encontrado |
+| 500 | Internal Server Error | Erro interno do servidor |
+
+---
+
+## 🔧 Estrutura do Banco de Dados
+
+### Tabela `usuarios`
+```sql
+id SERIAL PRIMARY KEY
+nome VARCHAR(100) NOT NULL
+email VARCHAR(100) UNIQUE NOT NULL
+senha_hash TEXT NOT NULL
+data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+### Tabela `categorias`
+```sql
+id SERIAL PRIMARY KEY
+nome VARCHAR(50) NOT NULL
+```
+
+### Tabela `tarefas`
+```sql
+id SERIAL PRIMARY KEY
+usuario_id INT NOT NULL (FK)
+titulo VARCHAR(255) NOT NULL
+descricao TEXT
+data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+data_limite DATE
+status VARCHAR(20) DEFAULT 'pendente' CHECK (status IN ('pendente', 'em progresso', 'concluída'))
+categoria_id INT (FK)
+```
+
+### Tabela `comentarios`
+```sql
+id SERIAL PRIMARY KEY
+tarefa_id INT NOT NULL (FK)
+usuario_id INT NOT NULL (FK)
+texto TEXT NOT NULL
+data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+---
+
+## 🚀 Como Executar o Sistema
+
+### **Pré-requisitos**
+- Node.js (v16+)
+- PostgreSQL (v12+)
+- npm ou yarn
+
+### **Configuração**
+1. Clone o repositório
+2. Instale dependências: `npm install`
+3. Configure arquivo `.env`:
+```env
+DB_USER=seu_usuario
+DB_HOST=localhost
+DB_DATABASE=nome_do_banco
+DB_PASSWORD=sua_senha
+DB_PORT=5432
+```
+4. Inicialize o banco: `npm run init-db`
+5. Execute: `npm run dev` (desenvolvimento) ou `npm start` (produção)
+
+### **URLs de Acesso**
+- **Frontend**: http://localhost:3000
+- **API Base**: http://localhost:3000/api
+
+---
+
+## 🧪 Testando a API
+
+### **Ferramentas Recomendadas**
+- **Postman**: Para testes interativos
+- **curl**: Para testes via linha de comando
+- **REST Client**: Extension do VS Code (arquivo `rest.http` incluído)
+
+### **Arquivo rest.http Incluído**
+O projeto inclui um arquivo `rest.http` com exemplos de requisições prontas para teste.
+
+### Fluxo Básico: Criar uma Tarefa Completa
+
+1. **Criar usuário**:
+```bash
+curl -X POST http://localhost:3000/api/usuarios \
+  -H "Content-Type: application/json" \
+  -d '{"nome": "Pedro Santos", "email": "pedro@email.com"}'
+```
+
+2. **Criar categoria**:
+```bash
+curl -X POST http://localhost:3000/api/categorias \
+  -H "Content-Type: application/json" \
+  -d '{"nome": "Desenvolvimento"}'
+```
+
+3. **Criar tarefa**:
+```bash
+curl -X POST http://localhost:3000/api/tarefas \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titulo": "Implementar API",
+    "descricao": "Desenvolver endpoints REST",
+    "usuario_id": 1,
+    "categoria_id": 1,
+    "status": "em progresso",
+    "data_limite": "2024-01-30"
+  }'
+```
+
+4. **Adicionar comentário**:
+```bash
+curl -X POST http://localhost:3000/api/comentarios \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tarefa_id": 1,
+    "usuario_id": 1,
+    "texto": "Iniciando desenvolvimento da API"
+  }'
+```
+
+---
+
+## 🛡️ Validações e Regras de Negócio
+
+### Tarefas
+- `titulo` é obrigatório
+- `usuario_id` deve existir na tabela de usuários
+- `status` deve ser um dos valores válidos
+- Ao excluir uma tarefa, todos os comentários associados são removidos
+
+### Usuários
+- `email` deve ser único
+- `nome` e `email` são obrigatórios
+- Validação de formato de email no frontend
+
+### Categorias
+- `nome` é obrigatório
+- Não é possível excluir categorias com tarefas associadas
+
+### Comentários
+- `tarefa_id` e `usuario_id` devem existir
+- `texto` é obrigatório
+
+---
+
+## 🔄 Próximas Melhorias Planejadas
+
+- [ ] Autenticação e autorização
+- [ ] Paginação nos endpoints de listagem
+- [ ] Filtros avançados na API
+- [ ] WebSockets para atualizações em tempo real
+- [ ] Upload de arquivos anexos às tarefas
+- [ ] API de relatórios e estatísticas
+- [ ] Logs de auditoria
+
+---
+
+## 🏗️ Características Técnicas
+
+### **Arquitetura**
+- **Pattern**: MVC (Model-View-Controller)
+- **Database**: PostgreSQL com pool de conexões
+- **Template Engine**: EJS
+- **CSS Framework**: Sistema personalizado com variáveis CSS
+- **Frontend**: Vanilla JavaScript ES6+ com Fetch API
+
+### **Performance e Segurança**
+- **Conexões de DB**: Pool de conexões PostgreSQL
+- **SQL Injection**: Prevenção via prepared statements
+- **CORS**: Habilitado para desenvolvimento
+- **Error Handling**: Tratamento centralizado de erros
+- **Logging**: Console logs para desenvolvimento
+
+### **Estrutura de Arquivos**
+```
+📁 Projeto/
+├── 📁 config/          # Configuração do banco
+├── 📁 controllers/     # Lógica de negócio
+├── 📁 models/          # Camada de dados
+├── 📁 routes/          # Definição de rotas
+├── 📁 views/           # Templates EJS
+├── 📁 public/          # Arquivos estáticos
+├── 📁 scripts/         # Scripts de inicialização
+└── 📁 tests/           # Testes unitários
+```
+
+### **Scripts NPM Disponíveis**
+```bash
+npm start              # Produção
+npm run dev            # Desenvolvimento (nodemon)
+npm test               # Testes unitários
+npm run test:coverage  # Coverage dos testes
+npm run init-db        # Inicializar banco
+npm run reset-db       # Reset completo do banco
+```
