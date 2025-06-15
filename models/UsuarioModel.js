@@ -2,7 +2,7 @@ const pool = require('../config/database');
 
 module.exports = {
   listar: async () => {
-    const { rows } = await pool.query('SELECT * FROM usuarios ORDER BY id');
+    const { rows } = await pool.query('SELECT * FROM usuarios');
     return rows;
   },
 
@@ -32,5 +32,5 @@ module.exports = {
   excluir: async (id) => {
     const { rows } = await pool.query('DELETE FROM usuarios WHERE id = $1 RETURNING *', [id]);
     return rows[0];
-  }
+  },
 };
