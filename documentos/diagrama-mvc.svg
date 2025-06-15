@@ -1,0 +1,232 @@
+<svg width="1400" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: bold 24px Arial; text-anchor: middle; fill: #2c3e50; }
+      .section-title { font: bold 16px Arial; text-anchor: middle; fill: white; }
+      .component-title { font: bold 14px Arial; text-anchor: middle; fill: #2c3e50; }
+      .component-text { font: 12px Arial; text-anchor: start; fill: #34495e; }
+      .label { font: 12px Arial; text-anchor: middle; fill: #7f8c8d; }
+      .arrow { stroke: #34495e; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .flow-arrow { stroke: #e74c3c; stroke-width: 3; fill: none; marker-end: url(#redarrowhead); }
+      .return-arrow { stroke: #27ae60; stroke-width: 3; fill: none; marker-end: url(#greenarrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#34495e" />
+    </marker>
+    <marker id="redarrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#e74c3c" />
+    </marker>
+    <marker id="greenarrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#27ae60" />
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1400" height="900" fill="#ecf0f1"/>
+  
+  <!-- Title -->
+  <text x="700" y="50" class="title">Arquitetura MVC - Sistema de Tarefas</text>
+  
+  <!-- Web Browser / Client -->
+  <g transform="translate(50, 120)">
+    <rect width="160" height="200" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="8"/>
+    <rect x="10" y="10" width="140" height="30" fill="#2980b9" rx="5"/>
+    <text x="80" y="30" class="section-title">Web Browser</text>
+    
+    <!-- Browser window -->
+    <rect x="20" y="55" width="120" height="120" fill="white" stroke="#bdc3c7" rx="3"/>
+    <rect x="25" y="60" width="110" height="20" fill="#ecf0f1" rx="2"/>
+    <circle cx="35" cy="70" r="3" fill="#e74c3c"/>
+    <circle cx="45" cy="70" r="3" fill="#f39c12"/>
+    <circle cx="55" cy="70" r="3" fill="#27ae60"/>
+    
+    <!-- Content -->
+    <text x="80" y="100" class="component-title">Interface</text>
+    <text x="30" y="120" class="component-text">• Dashboard</text>
+    <text x="30" y="135" class="component-text">• Formulários</text>
+    <text x="30" y="150" class="component-text">• Listagens</text>
+    <text x="30" y="165" class="component-text">• Botões de Ação</text>
+  </g>  
+  <!-- Web Server Container -->
+  <g transform="translate(280, 120)">
+    <rect width="820" height="500" fill="white" stroke="#95a5a6" stroke-width="2" rx="8"/>
+    <rect x="10" y="10" width="800" height="30" fill="#95a5a6" rx="5"/>
+    <text x="410" y="30" class="section-title">Servidor Web - Node.js + Express</text>
+    
+    <!-- View Layer -->
+    <g transform="translate(30, 70)">
+      <rect width="220" height="380" fill="#2ecc71" stroke="#27ae60" stroke-width="2" rx="5"/>
+      <rect x="10" y="10" width="200" height="30" fill="#27ae60" rx="3"/>
+      <text x="110" y="30" class="section-title">VIEW</text>
+      
+      <!-- Templates -->
+      <rect x="20" y="55" width="180" height="100" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="75" class="component-title">Templates EJS</text>
+      <text x="30" y="95" class="component-text">• main.ejs (layout)</text>
+      <text x="30" y="110" class="component-text">• dashboard.ejs</text>
+      <text x="30" y="125" class="component-text">• usuarios.ejs</text>
+      <text x="30" y="140" class="component-text">• tarefas.ejs</text>
+      
+      <!-- Assets -->
+      <rect x="20" y="170" width="180" height="100" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="190" class="component-title">Assets</text>
+      <text x="30" y="210" class="component-text">• CSS (style.css)</text>
+      <text x="30" y="225" class="component-text">• JavaScript (main.js)</text>
+      <text x="30" y="240" class="component-text">• Componentes</text>
+      <text x="30" y="255" class="component-text">• Partials</text>
+      
+      <!-- Features -->
+      <rect x="20" y="285" width="180" height="80" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="305" class="component-title">Funcionalidades</text>
+      <text x="30" y="325" class="component-text">• Botões de Ação</text>
+      <text x="30" y="340" class="component-text">• Navegação</text>
+      <text x="30" y="355" class="component-text">• Responsivo</text>
+    </g>
+    
+    <!-- Controller Layer -->
+    <g transform="translate(300, 70)">
+      <rect width="220" height="380" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+      <rect x="10" y="10" width="200" height="30" fill="#2980b9" rx="3"/>
+      <text x="110" y="30" class="section-title">CONTROLLER</text>
+      
+      <!-- Usuario Controller -->
+      <rect x="20" y="55" width="180" height="100" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="75" class="component-title">UsuarioController</text>
+      <text x="30" y="95" class="component-text">• listarUsuarios()</text>
+      <text x="30" y="110" class="component-text">• criarUsuario()</text>
+      <text x="30" y="125" class="component-text">• editarUsuario()</text>
+      <text x="30" y="140" class="component-text">• deletarUsuario()</text>
+      
+      <!-- Tarefa Controller -->
+      <rect x="20" y="170" width="180" height="100" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="190" class="component-title">TarefaController</text>
+      <text x="30" y="210" class="component-text">• listarTarefas()</text>
+      <text x="30" y="225" class="component-text">• criarTarefa()</text>
+      <text x="30" y="240" class="component-text">• editarTarefa()</text>
+      <text x="30" y="255" class="component-text">• deletarTarefa()</text>
+      
+      <!-- Categoria Controller -->
+      <rect x="20" y="285" width="180" height="80" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="305" class="component-title">CategoriaController</text>
+      <text x="30" y="325" class="component-text">• listarCategorias()</text>
+      <text x="30" y="340" class="component-text">• criarCategoria()</text>
+      <text x="30" y="355" class="component-text">• deletarCategoria()</text>
+    </g>
+    
+    <!-- Model Layer -->
+    <g transform="translate(570, 70)">
+      <rect width="220" height="380" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+      <rect x="10" y="10" width="200" height="30" fill="#8e44ad" rx="3"/>
+      <text x="110" y="30" class="section-title">MODEL</text>
+      
+      <!-- Usuario Model -->
+      <rect x="20" y="55" width="180" height="100" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="75" class="component-title">UsuarioModel</text>
+      <text x="30" y="95" class="component-text">• findAll()</text>
+      <text x="30" y="110" class="component-text">• findById()</text>
+      <text x="30" y="125" class="component-text">• create()</text>
+      <text x="30" y="140" class="component-text">• update() / delete()</text>
+      
+      <!-- Tarefa Model -->
+      <rect x="20" y="170" width="180" height="100" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="190" class="component-title">TarefaModel</text>
+      <text x="30" y="210" class="component-text">• findAll() (JOIN)</text>
+      <text x="30" y="225" class="component-text">• findById()</text>
+      <text x="30" y="240" class="component-text">• create()</text>
+      <text x="30" y="255" class="component-text">• update() / delete()</text>
+      
+      <!-- Categoria Model -->
+      <rect x="20" y="285" width="180" height="80" fill="white" stroke="#bdc3c7" rx="3"/>
+      <text x="110" y="305" class="component-title">CategoriaModel</text>
+      <text x="30" y="325" class="component-text">• findAll()</text>
+      <text x="30" y="340" class="component-text">• create()</text>
+      <text x="30" y="355" class="component-text">• delete()</text>
+    </g>
+  </g>
+  
+  <!-- Database Server -->
+  <g transform="translate(1150, 120)">
+    <rect width="200" height="380" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="8"/>
+    <rect x="10" y="10" width="180" height="30" fill="#c0392b" rx="5"/>
+    <text x="100" y="30" class="section-title">DATABASE</text>
+    
+    <!-- PostgreSQL -->
+    <rect x="20" y="55" width="160" height="80" fill="white" stroke="#bdc3c7" rx="3"/>
+    <text x="100" y="75" class="component-title">PostgreSQL</text>
+    
+    <!-- Database icon -->
+    <g transform="translate(80, 85)">
+      <ellipse cx="20" cy="5" rx="30" ry="8" fill="#e8f5e8" stroke="#27ae60" stroke-width="2"/>
+      <rect x="-10" y="5" width="60" height="25" fill="#e8f5e8" stroke="#27ae60" stroke-width="2"/>
+      <ellipse cx="20" cy="30" rx="30" ry="8" fill="#e8f5e8" stroke="#27ae60" stroke-width="2"/>
+    </g>
+    
+    <!-- Tables -->
+    <rect x="20" y="150" width="160" height="200" fill="white" stroke="#bdc3c7" rx="3"/>
+    <text x="100" y="170" class="component-title">Tabelas</text>
+    
+    <text x="30" y="195" class="component-text">📋 usuarios</text>
+    <text x="40" y="210" class="component-text">• id, nome, email</text>
+    <text x="40" y="225" class="component-text">• role, created_at</text>
+    
+    <text x="30" y="250" class="component-text">📋 tarefas</text>
+    <text x="40" y="265" class="component-text">• id, titulo, descricao</text>
+    <text x="40" y="280" class="component-text">• status, usuario_id</text>
+    <text x="40" y="295" class="component-text">• categoria_id</text>
+    
+    <text x="30" y="320" class="component-text">📋 categorias</text>
+    <text x="40" y="335" class="component-text">• id, nome, cor</text>
+  </g>  
+  <!-- Flow Arrows -->
+  <!-- Request Flow (Red) -->
+  <path class="flow-arrow" d="M 210 220 Q 250 180 310 210"/>
+  <text x="250" y="195" class="label" fill="#e74c3c">Request</text>
+  
+  <path class="flow-arrow" d="M 520 320 L 580 320"/>
+  <text x="550" y="310" class="label" fill="#e74c3c">1</text>
+  
+  <path class="flow-arrow" d="M 790 320 L 850 320"/>
+  <text x="820" y="310" class="label" fill="#e74c3c">2</text>
+  
+  <path class="flow-arrow" d="M 1100 300 L 1150 300"/>
+  <text x="1125" y="290" class="label" fill="#e74c3c">3</text>
+  
+  <!-- Response Flow (Green) -->
+  <path class="return-arrow" d="M 1150 340 L 1100 340"/>
+  <text x="1125" y="355" class="label" fill="#27ae60">4</text>
+  
+  <path class="return-arrow" d="M 850 360 L 790 360"/>
+  <text x="820" y="375" class="label" fill="#27ae60">5</text>
+  
+  <path class="return-arrow" d="M 580 360 L 520 360"/>
+  <text x="550" y="375" class="label" fill="#27ae60">6</text>
+  
+  <path class="return-arrow" d="M 310 280 Q 250 320 210 260"/>
+  <text x="250" y="300" class="label" fill="#27ae60">Response</text>
+  
+  <!-- Flow Description -->
+  <g transform="translate(50, 720)">
+    <rect width="1300" height="140" fill="white" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+    <rect x="10" y="10" width="1280" height="30" fill="#34495e" rx="5"/>
+    <text x="650" y="30" class="section-title">Fluxo de Dados da Arquitetura MVC</text>
+    
+    <!-- Request Flow -->
+    <g transform="translate(30, 60)">
+      <text x="0" y="20" class="component-title" fill="#e74c3c">📤 Fluxo de Requisição:</text>
+      <text x="0" y="40" class="component-text">1. Usuário interage com a interface (clica em botão, preenche formulário)</text>
+      <text x="0" y="55" class="component-text">2. View envia requisição HTTP para o Controller apropriado</text>
+      <text x="0" y="70" class="component-text">3. Controller processa a requisição e chama o Model correspondente</text>
+      <text x="0" y="85" class="component-text">4. Model executa operações no banco de dados PostgreSQL</text>
+    </g>
+    
+    <!-- Response Flow -->
+    <g transform="translate(680, 60)">
+      <text x="0" y="20" class="component-title" fill="#27ae60">📥 Fluxo de Resposta:</text>
+      <text x="0" y="40" class="component-text">4. Banco retorna os dados solicitados para o Model</text>
+      <text x="0" y="55" class="component-text">5. Model processa e retorna dados para o Controller</text>
+      <text x="0" y="70" class="component-text">6. Controller prepara os dados e renderiza a View (EJS)</text>
+      <text x="0" y="85" class="component-text">7. View HTML é enviada de volta para o navegador do usuário</text>
+    </g>
+  </g>
+
+</svg>
