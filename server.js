@@ -48,9 +48,9 @@ app.use("/", frontRoutes);
 app.use((req, res) => {
   res.status(404).render('error', {
     pageTitle: 'Página não encontrada',
+    title: 'Página não encontrada',
     error: { status: 404 },
-    title: 'Erro 404',
-    message: 'Página não encontrada'
+    message: 'A página que você está procurando não existe.'
   });
 });
 

@@ -230,6 +230,216 @@ header {
   box-shadow: var(--shadow-colored);
 }
 
+/* ========== BOTÕES DE AÇÃO DESTACADOS NO HEADER ========== */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  min-width: 100px;
+  justify-content: center;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+}
+
+.btn-action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.btn-action:hover::before {
+  left: 100%;
+}
+
+.btn-action i {
+  font-size: 16px;
+}
+
+.btn-text {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Botão Nova Tarefa - Verde/Azul gradiente */
+.btn-nova-tarefa {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid transparent;
+}
+
+.btn-nova-tarefa:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.btn-nova-tarefa:active {
+  transform: translateY(0) scale(1.02);
+}
+
+/* Botão Gerenciar Usuários - Laranja/Rosa gradiente */
+.btn-gerenciar-usuarios {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border: 2px solid transparent;
+}
+
+.btn-gerenciar-usuarios:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+  background: linear-gradient(135deg, #e881f9 0%, #f3495a 100%);
+}
+
+.btn-gerenciar-usuarios:active {
+  transform: translateY(0) scale(1.02);
+}
+
+/* Botão Gerenciar Categorias - Verde/Ciano gradiente */
+.btn-gerenciar-categorias {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border: 2px solid transparent;
+}
+
+.btn-gerenciar-categorias:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+  background: linear-gradient(135deg, #3d9aec 0%, #00e0ec 100%);
+}
+
+.btn-gerenciar-categorias:active {
+  transform: translateY(0) scale(1.02);
+}
+
+/* Botão Dashboard - Laranja/Amarelo gradiente */
+.btn-dashboard {
+  background: linear-gradient(135deg, #ff9a56 0%, #ffad56 100%);
+  border: 2px solid transparent;
+}
+
+.btn-dashboard:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 154, 86, 0.4);
+  background: linear-gradient(135deg, #ff8844 0%, #ff9844 100%);
+}
+
+.btn-dashboard:active {
+  transform: translateY(0) scale(1.02);
+}
+
+/* Responsividade para os botões de ação */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons {
+    gap: 8px;
+    margin-right: 12px;
+  }
+  
+  .btn-action {
+    min-width: 90px;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  
+  .btn-action i {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .action-buttons {
+    gap: 6px;
+    margin-right: 0;
+    justify-content: center;
+    order: 3;
+  }
+  
+  .btn-action {
+    min-width: auto;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .btn-text {
+    display: none;
+  }
+  
+  .btn-action i {
+    font-size: 12px;
+  }
+  
+  .header-actions {
+    order: 2;
+    justify-content: center;
+  }
+  
+  .nav-links {
+    order: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    gap: 4px;
+  }
+  
+  .btn-action {
+    padding: 5px 8px;
+    min-width: 35px;
+  }
+  
+  .btn-action i {
+    font-size: 10px;
+  }
+}
+
+/* Ajuste na posição dos header-actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .header-actions {
+    gap: 12px;
+  }
+}
+
 /* ===== CONTAINER PRINCIPAL ===== */
 .container {
   max-width: 1400px;
@@ -724,11 +934,11 @@ header {
 }
 
 @keyframes fadeInUp {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(20px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -1467,4 +1677,157 @@ header {
 [data-theme="dark"] .dropdown-item:hover {
   background: var(--gray-700);
   color: var(--primary-light);
+}
+
+/* ===== BREADCRUMBS MODERNOS ===== */
+.breadcrumb {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.25rem;
+  margin: 0;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+[data-theme="dark"] .breadcrumb {
+  background: rgba(30, 41, 55, 0.7);
+  border-color: rgba(71, 85, 105, 0.8);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  color: var(--gray-400);
+  margin: 0 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.breadcrumb-item a {
+  color: var(--primary-solid);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumb-item a:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.breadcrumb-item.active {
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+[data-theme="dark"] .breadcrumb-item.active {
+  color: var(--gray-300);
+}
+
+.breadcrumb-item i {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Efeito de entrada para breadcrumbs */
+.breadcrumb {
+  animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade para breadcrumbs */
+@media (max-width: 576px) {
+  .breadcrumb {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .breadcrumb-item + .breadcrumb-item::before {
+    margin: 0 0.5rem;
+  }
+  
+  .breadcrumb-item span {
+    display: none; /* Esconder texto em telas pequenas, manter só ícones */
+  }
+}
+
+/* ===== MELHORIAS PARA BOTÕES DE NAVEGAÇÃO ===== */
+.d-flex.gap-2 {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-outline-secondary {
+  border-color: var(--gray-300);
+  color: var(--gray-600);
+  transition: all var(--transition-fast);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+  color: var(--gray-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+  border-color: var(--gray-600);
+  color: var(--gray-400);
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+  background: var(--gray-700);
+  border-color: var(--gray-500);
+  color: var(--gray-200);
+}
+
+/* Responsividade para botões de ação */
+@media (max-width: 768px) {
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+  
+  .d-flex.gap-2 {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    flex: 1;
+    white-space: nowrap;
+  }
+  
+  .btn-outline-secondary {
+    min-width: 120px;
+  }
 }

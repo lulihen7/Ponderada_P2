@@ -4,66 +4,36 @@
       <!-- Logo -->
       <a href="/" class="logo">
         <i class="fas fa-check-double"></i>
-        Tarefas<span style="font-weight: 300;">+</span>
-      </a>
-      
-      <!-- Navegação -->
-      <ul class="nav-links">
-        <li>
-          <a href="/" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'active' : '' %>">
-            <i class="fas fa-tachometer-alt"></i>
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a href="/tarefas-page" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'tarefas' ? 'active' : '' %>">
-            <i class="fas fa-tasks"></i>
-            Tarefas
-          </a>
-        </li>
-        <li>
-          <a href="/usuarios-page" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'usuarios' ? 'active' : '' %>">
-            <i class="fas fa-users"></i>
-            Usuários
-          </a>
-        </li>
-        <li>
-          <a href="/categorias-page" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'categorias' ? 'active' : '' %>">
-            <i class="fas fa-tags"></i>
-            Categorias
-          </a>
-        </li>
-      </ul>
+        Tarefas<span style="font-weight: 300;">+</span>      </a>
       
       <!-- Ações do Header -->
-      <div class="header-actions">
+      <div class="header-actions">        <!-- Botões de Ação Destacados -->
+        <div class="action-buttons">
+          <button class="btn-action btn-dashboard" title="Dashboard" onclick="window.location.href='/'">
+            <i class="fas fa-tachometer-alt"></i>
+            <span class="btn-text">Dashboard</span>
+          </button>
+          
+          <button class="btn-action btn-nova-tarefa" title="Nova Tarefa" onclick="window.location.href='/tarefas-page'">
+            <i class="fas fa-plus"></i>
+            <span class="btn-text">Nova Tarefa</span>
+          </button>
+          
+          <button class="btn-action btn-gerenciar-usuarios" title="Gerenciar Usuários" onclick="window.location.href='/usuarios-page'">
+            <i class="fas fa-users"></i>
+            <span class="btn-text">Usuários</span>
+          </button>
+          
+          <button class="btn-action btn-gerenciar-categorias" title="Gerenciar Categorias" onclick="window.location.href='/categorias-page'">
+            <i class="fas fa-tags"></i>
+            <span class="btn-text">Categorias</span>
+          </button>
+        </div>
+        
         <!-- Toggle de Tema -->
         <button class="theme-toggle" title="Alternar tema">
           <i class="fas fa-moon"></i>
         </button>
-        
-        <!-- Botão de Ação Rápida -->
-        <div class="dropdown">
-          <button class="btn btn-primary dropdown-toggle" id="quick-actions">
-            <i class="fas fa-plus"></i>
-            <span class="hidden-mobile">Criar</span>
-            <i class="fas fa-chevron-down" style="font-size: 0.75em; opacity: 0.7;"></i>
-          </button>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item" onclick="abrirModalTarefa?.()">
-              <i class="fas fa-task"></i>
-              Nova Tarefa
-            </a>
-            <a href="#" class="dropdown-item" onclick="abrirModalUsuario?.()">
-              <i class="fas fa-user-plus"></i>
-              Novo Usuário
-            </a>
-            <a href="#" class="dropdown-item" onclick="abrirModalCategoria?.()">
-              <i class="fas fa-tag"></i>
-              Nova Categoria
-            </a>
-          </div>
-        </div>
         
         <!-- Indicador de Status -->
         <div class="status-indicator online" title="Sistema online"></div>
@@ -95,26 +65,8 @@
         container.appendChild(particle);
       }
     }
-    
-    // Dropdown functionality
+      // Dropdown functionality
     document.addEventListener('DOMContentLoaded', function() {
-      const dropdown = document.querySelector('.dropdown');
-      const toggle = dropdown?.querySelector('.dropdown-toggle');
-      
-      if (toggle) {
-        toggle.addEventListener('click', function(e) {
-          e.preventDefault();
-          dropdown.classList.toggle('active');
-        });
-        
-        // Fechar dropdown ao clicar fora
-        document.addEventListener('click', function(e) {
-          if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove('active');
-          }
-        });
-      }
-      
       // Criar partículas após carregamento
       createParticles();
       
