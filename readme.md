@@ -162,6 +162,10 @@ Execute os testes com:
 npm test
 ```
 
+### Video do site funcinando
+
+https://github.com/lulihen7/Ponderada_P2/blob/main/documentos/screen-recording-2025-06-15-194106_iBCNqOjj.mp4
+
 ## 🎯 Requisitos da Ponderada 3 Implementados
 
 ### ✅ Passo 1 - Construção das Views
